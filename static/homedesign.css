@@ -1,0 +1,79 @@
+    body{
+        background-image: url(static/images/home_bg.jpg);
+        background-size: cover;
+        font-family: sans-serif;
+      color:white;
+    }
+    .logo{
+      color:white;
+      font-size: 35px;
+      font-family: Arial;
+      padding-left: 20px;
+      float: left;
+      padding-top: 0px;
+      margin-top: 0px
+  }
+  .menubar{
+    margin: 0px;
+    padding: 0px;
+    
+  }
+ .menubar ul li{
+    
+    float: left;
+    width: 300px;
+    height: 50px;
+    list-style: none;
+    
+    
+    line-height: 40px;
+    text-align: center;
+    font size: 25px; 
+    
+}
+   .menubar ul li a {
+      text-decoration: none;
+      color: white;
+      display: block;
+
+ }
+   .menubar ul li a:hover
+ {
+    background-color:black;
+    border-radius: 10px;
+  
+
+ }
+ .submenu{
+    display: none;
+ }
+  .menubar ul li:hover .submenu{
+    display: block;
+ }
+
+ .scroll-bg{
+    float : right;
+    width=800px;
+    margin: 10% auto;
+    background: white;
+    opacity: .8;
+    padding: 10px;
+    border-radius: 20px;
+    
+    
+
+ }
+ .scroll-div{
+      width:700px;
+      height:450px;
+      overflow:hidden;
+      overflow-y: scroll;
+      
+ }
+ .scroll-object{
+   color: rgb(16, 10, 10);
+   font-family:sans-serif,cursive;
+   font-size: 15px;
+   margin-top: 15px;
+   margin-left: 5px;
+ }
