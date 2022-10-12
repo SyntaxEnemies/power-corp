@@ -1,0 +1,13 @@
+[Unit]
+Description=start uWSGI instance to serve power corporation management flask web app
+After=network.target
+
+[Service]
+User=http
+Group=http
+WorkingDirectory=/var/www/power-corp
+Environment="PATH=/var/www/power-corp/venv/bin"
+ExecStart=/var/www/power-corp/venv/bin/uwsgi --ini wsgi-config.ini
+
+[Install]
+WantedBy=multi-user.target
