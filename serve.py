@@ -1,11 +1,12 @@
 from flask import Flask, render_template
-app = Flask(__name__)
 
+app = Flask(__name__)
+app.config.from_envvar('CONFIG_FILE')
 
 @app.route("/")
-@app.route("/homepage")
+@app.route("/home")
 def home() -> 'html':
-    return render_template('homepage.html')
+    return render_template('home.html')
 
 
 @app.route("/login")
@@ -14,7 +15,7 @@ def login() -> 'html':
 
 
 @app.route("/logout")
-def login() -> 'html':
+def logout() -> 'html':
     return render_template('logout.html')
 
 if __name__ == "__main__":
