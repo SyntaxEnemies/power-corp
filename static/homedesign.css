@@ -4,76 +4,92 @@
         font-family: sans-serif;
       color:white;
     }
-    .logo{
-      color:white;
-      font-size: 35px;
-      font-family: Arial;
-      padding-left: 20px;
-      float: left;
-      padding-top: 0px;
-      margin-top: 0px
-  }
-  .menubar{
-    margin: 0px;
-    padding: 0px;
-    
-  }
- .menubar ul li{
-    
-    float: left;
-    width: 300px;
-    height: 50px;
-    list-style: none;
-    
-    
-    line-height: 40px;
-    text-align: center;
-    font size: 25px; 
-    
-}
-   .menubar ul li a {
-      text-decoration: none;
-      color: white;
-      display: block;
-
- }
-   .menubar ul li a:hover
- {
-    background-color:black;
-    border-radius: 10px;
+    .menubar{
   
-
- }
- .submenu{
-    display: none;
- }
-  .menubar ul li:hover .submenu{
+      width: 85%;
+      margin: auto;
+      padding: 11px 0;
+      display: flex;
+      align-items:  center;
+      justify-content: space-between;
+  
+  }
+   .menubar .logo{
+      width:100px;
+      cursor:pointer;
+    }
+  .menubar ul li{
+  
+      list-style: none;
+      display: inline-block;
+      margin: 0 20px;
+      position: relative;
+  }
+  .menubar ul li a {
+    text-decoration: none;
+    color: white;
+    text-transform: uppercase;
+  }
+  .menubar ul li::after{
+      content:'';
+      height: 3px;
+      width: 0;
+      background: #009688;
+      position: absolute;
+      left: 0;
+      bottom: -5px;
+      transition: 0.3s;
+  
+  }
+  .menubar ul li:hover::after{
+       width: 100%;
+  }
+  .menubar ul li a:hover
+  {
+  background-color:black;
+  border-radius: 10px;
+  
+  
+  }
+  .submenu{
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 100%;
+  
+  }
+  .submenu ul li{
     display: block;
- }
-
- .scroll-bg{
-    float : right;
-    width=800px;
-    margin: 10% auto;
-    background: white;
-    opacity: .8;
-    padding: 10px;
-    border-radius: 20px;
+    margin:10px; 
+  }
+  .menubar ul li:hover .submenu{
+  display: block;
+  }
+  
+  .scroll-bg{
+  float : right;
+  width=800px;
+  margin: 10% auto;
+  background: white;
+  opacity: .8;
+  padding: 10px;
+  border-radius: 20px;
+  
+  
+  
+  }
+  .scroll-div{
+    width:700px;
+    height:450px;
+    overflow:hidden;
+    overflow-y: scroll;
     
-    
-
- }
- .scroll-div{
-      width:700px;
-      height:450px;
-      overflow:hidden;
-      overflow-y: scroll;
-      
- }
- .scroll-object{
-   color: rgb(16, 10, 10);
-   font-family:sans-serif,cursive;
-   font-size: 15px;
-   margin-top: 15px;
-   margin-left: 5px;
- }
+  }
+  .scroll-object{
+  color: rgb(16, 10, 10);
+  font-family:sans-serif,cursive;
+  font-size: 15px;
+  margin-top: 15px;
+  margin-left: 5px;
+  }
+  
