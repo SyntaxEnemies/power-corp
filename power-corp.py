@@ -1,7 +1,11 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, session
 
 app = Flask(__name__)
+app.secret_key = 'eTgcGqlZFO5cBIedkYoc'
 app.config.from_envvar('CONFIG_FILE')
+
+dbconfig = {k: v for k, v in app.config.items() if k.startswith('DB')}
+print(dbconfig)
 
 @app.route("/")
 @app.route("/home")
