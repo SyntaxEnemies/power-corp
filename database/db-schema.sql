@@ -54,14 +54,12 @@ CREATE TABLE `emp_details` (
   `email` varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL CHECK (`email` like '%@%.%'),
   `mobile_num` decimal(10,0) NOT NULL,
   `role` varchar(8) COLLATE utf8mb4_unicode_ci NOT NULL CHECK (`role` in ('Scout','Cashier','Admin')),
-  `salt` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `password` (`password`),
   UNIQUE KEY `mobile_num` (`mobile_num`),
   UNIQUE KEY `username_2` (`username`),
-  UNIQUE KEY `password_2` (`password`),
-  UNIQUE KEY `hash` (`salt`)
+  UNIQUE KEY `password_2` (`password`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -84,15 +82,13 @@ CREATE TABLE `user_details` (
   `password` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
   `mobile_num` decimal(10,0) NOT NULL,
   `email` varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL CHECK (`email` like '%@%.%'),
-  `salt` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `password` (`password`),
   UNIQUE KEY `mobile_num` (`mobile_num`),
   UNIQUE KEY `password_2` (`password`),
-  UNIQUE KEY `username_2` (`username`),
-  UNIQUE KEY `hash` (`salt`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  UNIQUE KEY `username_2` (`username`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -104,4 +100,4 @@ CREATE TABLE `user_details` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-10-22 21:31:49
+-- Dump completed on 2022-10-29 17:44:26
