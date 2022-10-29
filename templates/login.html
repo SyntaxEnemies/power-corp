@@ -76,16 +76,16 @@
   <body class="text-center">
     
 <main class="form-signin w-100 m-auto">
-  <form>
+  <form method='POST' action='/login'>
     <img class="mb-4" src="../static/images/useravtar.png" alt="" width="80" height="70">
     <h1 class="h3 mb-3 fw-normal"><B>User Login</B></h1>
 
     <div class="form-floating">
-      <input type="username" class="form-control" id="floatingInput" placeholder="name@example.com">
+      <input type="username" class="form-control" name="username" id="floatingInput" placeholder="name@example.com">
       <label for="floatingInput"><i>Username</i></label>
     </div>
     <div class="form-floating">
-      <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+      <input type="password" class="form-control" name="password" id="floatingPassword" placeholder="Password">
       <label for="floatingPassword"><i>Password</i></label>
     </div>
 
@@ -94,7 +94,7 @@
         <input type="checkbox" value="remember-me"> Remember me
       </label>
     </div>
-    <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+    <input class="w-100 btn btn-lg btn-primary" type="submit" value="Login">
     <p class="mt-5 mb-3 text-muted">&copy; 2022-2024</p>
   </form>
 </main>
