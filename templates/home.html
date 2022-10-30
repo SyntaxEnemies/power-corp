@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>homepage   </title>
-    <link rel="stylesheet" href="../static/homedesign.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body>
 
-    
+<style>
+    body {
+      background: linear-gradient(0.25turn, #8275f6, #d8e3f3);
+    }
+</style>
+
+<body>
             <div class="menubar">
-                <img src="../static/images/logo.png" class="logo">
+                <img src="{{ url_for('static', filename='img/logo.png') }}" class="logo">
                 <ul>
                     <li><a href="#"><b><i>HOME</i></b></a></li>
                     <li><a href="#"><b><i>ABOUT</i></b></a></li>
@@ -30,6 +34,5 @@
        </div>
 
           </div>   
-             
-</body>
+    </body>
 </html>

@@ -10,7 +10,7 @@ app.config.from_envvar('CONFIG_FILE')
 @app.route("/", methods=["GET"])
 @app.route("/home", methods=["GET"])
 def home() -> 'html':
-    return render_template('home.html')
+    return render_template('home.html', the_title='Home')
 
 @app.route("/login", methods=['GET', 'POST'])
 def login() -> 'html | Redirect':
@@ -34,7 +34,7 @@ def login() -> 'html | Redirect':
             # flash('Invalid username')
             # return redirect(url_for('login'))
             return '<h1>Invalid username</h1>'
-    return render_template('login.html')
+    return render_template('login.html', the_title="Login")
 
 @app.route('/logout', methods=["GET"])
 def logout() -> 'html':

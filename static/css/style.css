@@ -1,0 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script&family=MonteCarlo&family=Roboto&family=STIX+Two+Text&display=swap');
+
+:root {
+    --font: "Roboto"
+}
+
+html,
+body {
+  height: 100%;
+}
+
+.form-signin {
+  max-width: 360px;
+  padding: 15px;
+}
+
+.form-signin .form-floating:focus-within {
+  z-index: 2;
+}
+
+.form-signin input[type="username"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.menubar{ width: 85%; margin: auto; padding: 11px 0; display: flex; align-items:  center; justify-content: space-between; }.menubar .logo{ width:100px;
+      cursor:pointer;}.menubar ul li{ list-style: none; display: inline-block; margin: 0 20px; position: relative;} .menubar ul li a { text-decoration: none; color: white;
+    text-transform: uppercase; } .menubar ul li::after{ content:''; height: 3px; width: 0; background: #009688; position: absolute; left: 0; bottom: -5px; transition: 0.3s;
+  } .menubar ul li:hover::after{ width: 100%;} .menubar ul li a:hover { background-color:black; border-radius: 10px; } .submenu{ display: none; position: absolute; left: 0; top: 100%;
+  } .submenu ul li{ display: block; margin:10px; }.menubar ul li:hover .submenu{ display: block;} .content{ width: 100%; position: absolute; top: 40%; transform: translateY(-50%);
+  text-align: center; color: #fff;} .content .par{ padding-left: 50px; padding-bottom: 25px; font-family: Arial; letter-spacing: 1.2px; line-height: 30px; } .content h1{
+    font-family: 'Times New Roman'; font-size: 50px; padding-left: 20px; margin-top: 9%; letter-spacing: 2px; color: #191715;}
+

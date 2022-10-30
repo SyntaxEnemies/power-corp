@@ -1,9 +1,0 @@
-    body{/* background-image: url(images/home_bg.jpg); */background: linear-gradient(0.25turn, #4d42b6,#08BCBE,#4d42b6,#08BCBE);  font-family: sans-serif;
-      color:white; }.menubar{ width: 85%; margin: auto; padding: 11px 0; display: flex; align-items:  center; justify-content: space-between; }.menubar .logo{ width:100px;
-      cursor:pointer;}.menubar ul li{ list-style: none; display: inline-block; margin: 0 20px; position: relative;} .menubar ul li a { text-decoration: none; color: white;
-    text-transform: uppercase; } .menubar ul li::after{ content:''; height: 3px; width: 0; background: #009688; position: absolute; left: 0; bottom: -5px; transition: 0.3s;
-  } .menubar ul li:hover::after{ width: 100%;} .menubar ul li a:hover { background-color:black; border-radius: 10px; } .submenu{ display: none; position: absolute; left: 0; top: 100%;
-  } .submenu ul li{ display: block; margin:10px; }.menubar ul li:hover .submenu{ display: block;} .content{ width: 100%; position: absolute; top: 40%; transform: translateY(-50%);
-  text-align: center; color: #fff;} .content .par{ padding-left: 50px; padding-bottom: 25px; font-family: Arial; letter-spacing: 1.2px; line-height: 30px; } .content h1{
-    font-family: 'Times New Roman'; font-size: 50px; padding-left: 20px; margin-top: 9%; letter-spacing: 2px; color: #191715;}
-
