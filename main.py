@@ -10,9 +10,11 @@ app.config.from_envvar('CONFIG_FILE')
 @app.route("/", methods=["GET"])
 @app.route("/home", methods=["GET"])
 def home() -> 'html':
+    flash("yeah baby")
     return render_template('home.html', the_title='Home')
 
 @app.route("/login", methods=['GET', 'POST'])
+
 def login() -> 'html | Redirect':
     if request.method == 'POST':
         username = request.form['username']
@@ -21,20 +23,28 @@ def login() -> 'html | Redirect':
 
         if user:
             if check_hash(password, user[8]):
-                msg = 'Login successful for ' + username
-                # flash(msg)
                 session['logged_in'] = True
-                # return redirect(url_for('dashboard'))
-                return "<h1>{}</h1>".format(msg)
+                msg = 'Login successful for ' + username
+                flash(msg)
+                return redirect(url_for('dashboard'))
+                # return "<h2>{}</h2>".format(msg)
             else:
-                # flash('Invalid password')
-                # return redirect(url_for('login'))
-                return '<h1>Invalid password</h1>'
+                flash('Invalid password')
+                return redirect(url_for('login'))
+                # return '<h2>Invalid password</h2>'
         else:
-            # flash('Invalid username')
-            # return redirect(url_for('login'))
-            return '<h1>Invalid username</h1>'
+            flash('Invalid username')
+            return redirect(url_for('login'))
+            # return '<h2>Invalid username</h2>'
     return render_template('login.html', the_title="Login")
+
+@app.route('/dashboard', methods=["GET", "POST"])
+def dashboard() -> 'html':
+    return render_template('temp.html')
+
+@app.route('/register', methods=["GET", "POST"])
+def register() -> 'html':
+    return '<h2>You have successfully requested a connection.</h2>'
 
 @app.route('/logout', methods=["GET"])
 def logout() -> 'html':
