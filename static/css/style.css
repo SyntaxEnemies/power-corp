@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Dancing+Script&family=MonteCarlo&family=Roboto&family=STIX+Two+Text&display=swap');
 
 :root {
-    --font: "Roboto"
+    --font: 'Roboto'
 }
 
 html,
@@ -18,13 +18,13 @@ body {
   z-index: 2;
 }
 
-.form-signin input[type="username"] {
+.form-signin input[type='username'] {
   margin-bottom: -1px;
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
 }
 
-.form-signin input[type="password"] {
+.form-signin input[type='password'] {
   margin-bottom: 10px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
@@ -76,7 +76,7 @@ body {
   .submenu ul li{
      display: list-item; 
      margin:10px;
-   
+
     }
    .menubar ul li:hover .submenu
     { 
@@ -105,7 +105,7 @@ body {
       margin-top: 9%; 
       letter-spacing: 2px; 
       color: #3c2f21;}
-    
+
   button{
      width:200px;
       padding:15px 0; 
