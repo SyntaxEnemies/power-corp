@@ -48,13 +48,11 @@ def login() -> 'html | Redirect':
 
         if user:
             if check_hash(input_password, user[8]):
-                msg = 'Login successful for ' + username
-                # flash(msg)
                 session['logged_in'] = True
-                msg = 'Login successful for ' + username
-                flash(msg)
-                return redirect(url_for('dashboard'))
-                # return "<h2>{}</h2>".format(msg)
+                msg = 'Login successful for ' + user[7]
+                # flash(msg)
+                # return redirect(url_for('dashboard'))
+                return "<h2>{}</h2>".format(msg)
             else:
                 flash('Invalid password')
                 return redirect(url_for('login'))
