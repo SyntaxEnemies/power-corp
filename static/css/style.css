@@ -36,7 +36,8 @@ body {
   padding: 11px 0;
    display: flex; 
    align-items:center;
-    justify-content: space-between; }
+    justify-content: space-between;
+   }
 .menubar .logo
 { width:100px;
   cursor:pointer;}
@@ -54,19 +55,16 @@ body {
   content:''; 
   height: 3px; 
   width: 0;
-   background: #009688;
+   background: #bbd7d4;
     position: absolute; 
     left: 0; 
     bottom: 2px;
-     transition: 0.3s;
+     transition: 0.5s;
   } 
   .menubar ul li:hover::after{
      width: 100%;
     }
- .menubar ul li a:hover {
-   background-color:rgb(43, 38, 58); 
-   border-radius:5px; 
-  } 
+ 
   .submenu{
      display: none;
      position: absolute; 
@@ -104,7 +102,7 @@ body {
       padding-left: 20px; 
       margin-top: 9%; 
       letter-spacing: 2px; 
-      color: #3c2f21;}
+      color: #fff;}
 
   button{
      width:200px;
@@ -113,8 +111,8 @@ body {
       margin: 20px 10px ;
        border-radius: 7px;
         font-weight:bold ; 
-        border: 2px solid #070808; 
-        background: rgb(84, 76, 76); 
+        border: 1.5px solid #fff; 
+        background: #312866; 
         color: #fff; 
         cursor: pointer;
       }
