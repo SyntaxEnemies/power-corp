@@ -26,7 +26,7 @@ def new_user() -> 'html':
                     'password':   get_hash(request.form['passwd']),
                     'mobile_num': request.form['mobile_num'],
                     'email':      request.form.get('email'), }
-        print(new_user)
+        # print(new_user)
         crud.add_user(new_user)
 
         # msg = ( 'Dear {user}, your request for a new connection'
@@ -47,9 +47,10 @@ def login() -> 'html | Redirect':
         user = crud.get_user(input_username)
 
         if user:
-            if check_hash(input_password, user[8]):
+            # print(user)
+            if check_hash(input_password, user['password']):
                 session['logged_in'] = True
-                msg = 'Login successful for {}'.format(user[7])
+                msg = 'Login successful for {}'.format(user['username'])
                 # flash(msg)
                 # return redirect(url_for('dashboard'))
                 return '<h2>{}</h2>'.format(msg)
