@@ -30,92 +30,43 @@ body {
   border-top-right-radius: 0;
 }
 
-.menubar{ 
-  width: 85%; 
-  margin: auto; 
-  padding: 11px 0;
-   display: flex; 
-   align-items:center;
-    justify-content: space-between;
-   }
-.menubar .logo
-{ width:100px;
-  cursor:pointer;}
-.menubar ul li{
-         list-style: none;
-          display: inline-block;
-           margin: 0 20px;
-            position: relative;} 
-.menubar ul li a {
-       text-decoration: none; 
-      color: white;
-     text-transform: uppercase;
-     }
- .menubar ul li::after{ 
-  content:''; 
-  height: 3px; 
-  width: 0;
-   background: #bbd7d4;
-    position: absolute; 
-    left: 0; 
-    bottom: 2px;
-     transition: 0.5s;
-  } 
-  .menubar ul li:hover::after{
-     width: 100%;
-    }
- 
-  .submenu{
-     display: none;
-     position: absolute; 
-     left: 0; 
-     top: 100%;
-  } 
-  .submenu ul li{
-     display: list-item; 
-     margin:10px;
+.btn-secondary,
+.btn-secondary:hover,
+.btn-secondary:focus {
+  color: #333;
+  text-shadow: none; /* Prevent inheritance from `body` */
+}
 
-    }
-   .menubar ul li:hover .submenu
-    { 
-      display: block;
-    } 
-  .content{
-     width: 100%; 
-     position: absolute; 
-     top: 40%; 
-     font: bold;
-     transform: translateY(-50%);
-     text-align: center; 
-     color: #fff;
-    } 
-    .content .par{ 
-      padding-left: 50px; 
-      padding-bottom: 25px; 
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; 
-      letter-spacing: 1.2px; 
-      line-height: 30px; 
-    } 
-    .content h1{
-      font-size: 55px; 
-      font-weight: 600;
-      padding-left: 20px; 
-      margin-top: 9%; 
-      letter-spacing: 2px; 
-      color: #fff;}
 
-  button{
-     width:200px;
-      padding:15px 0; 
-      text-align: center ; 
-      margin: 20px 10px ;
-       border-radius: 7px;
-        font-weight:bold ; 
-        border: 1.5px solid #fff; 
-        background: #312866; 
-        color: #fff; 
-        cursor: pointer;
-      }
+
+.cover-container {
+  max-width: 42em;
+}
+
+
+/*
+ * Header
+ */
+
+.nav-masthead .nav-link {
+  color: #fff;
+  border-bottom: .25rem solid transparent;
+}
+
+.nav-masthead .nav-link:hover,
+.nav-masthead .nav-link:focus {
+  border-bottom-color: #2edab7;
+}
+
+.nav-masthead .nav-link + .nav-link {
+  margin-left: 1rem;
+}
+
+.nav-masthead .active {
+  color: #fff;
+  border-bottom-color: #fff;
+}
+
       .card-registration .select-input.form-control[readonly]:not([disabled]) {
         font-size: 1rem;
         line-height: 2.15;
