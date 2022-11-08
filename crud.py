@@ -23,7 +23,6 @@ def get_column_names(table: str) -> list:
     columns = []
     for row in schema:
         columns.append(row[0])
-
     return columns
 
 
