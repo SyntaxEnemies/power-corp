@@ -36,6 +36,10 @@ def login() -> 'html | Redirect':
             return '<h1>Invalid username</h1>'
     return render_template('login.html', the_title="Login")
 
+@app.route('/dashboard', methods=["GET"])
+def dashboard() -> 'html':
+    return render_template('dashboard.html')
+
 @app.route('/logout', methods=["GET"])
 def logout() -> 'html':
     return render_template('logout.html')
