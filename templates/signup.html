@@ -1,0 +1,49 @@
+<!doctype html>
+{% extends 'base.html' %}
+{% block body %}
+
+<section class="vh-100">
+  <div class="container py-4 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+        <div class="card shadow-2-strong" style="border-radius: 1rem;">
+          <div class="card-body p-5 text-center">
+            <img class="mb-4" src="{{ url_for('static', filename='img/useravatar.png') }}" alt="" width="72" height="70" align-items-right>
+            <h3 class="mb-5"><b>Register</b></h3>  
+
+            <form method="POST" action="signup">
+              <div class='form-floating  mb-3'>
+                <input type='username' class='form-control' name='uname' id='floatingInput' placeholder='name@example.com'>
+                <label for='floatingInput'><i>Username</i></label>
+              </div>
+
+              <div class='form-floating  mb-3'>
+                <input type='password' class='form-control' name='passwd' id='floatingPassword' placeholder='Password'>
+                <label for='floatingPassword'><i>Password</i></label>
+              </div>
+
+              <div class="form-floating mb-3">
+                <input type="password" class="form-control" name="confirm-passwd" id="floatingPassword" placeholder="Password">
+                <label for="floatingPassword"><i> Confirm Password</i></label>
+              </div>
+
+              <!-- No need for text box at least for now -->
+              <!-- Checkbox -->
+              <!-- <div class="form-check d-flex justify-content-center mb-4"> -->
+              <!--   <input class="form-check-input me-2" type="checkbox" value="" id="registerCheck" checked -->
+              <!--     aria-describedby="registerCheckHelpText" /> -->
+              <!--   <label class="form-check-label" for="registerCheck"> -->
+              <!--     I have read and agree to the terms -->
+              <!--   </label> -->
+              <!-- </div> -->
+
+              <!-- Submit button -->
+              <button type="submit" class=" w-50 btn btn-primary btn-block mb-10">Sign up</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
