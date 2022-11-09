@@ -15,18 +15,16 @@ def home() -> 'html':
 
 
 @app.route('/register', methods=['GET', 'POST'])
-def register() -> 'html | 307':
+def register() -> 'html | 302':
     if request.method == 'POST':
         session['registration'] = {'first_name': request.form['fname'],
                                    'last_name':  request.form['lname'],
                                    'age':        request.form['age'],
                                    'address':    request.form['addr'],
                                    'gender':     request.form['gender'],
-                                   'username':   request.form.get('uname'),
-                                   'password':   request.form.get('passwd'),
                                    'mobile_num': request.form['mobile_num'],
                                    'email':      request.form.get('email'), }
-        return redirect(url_for('set_credentials'), code=307)
+        return redirect(url_for('set_credentials'))
         # print(registration)
 
     return render_template('register.html', the_title='New Connection')
