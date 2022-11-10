@@ -26,7 +26,7 @@ def get_column_names(table: str) -> list:
     return columns
 
 
-def get_user(uname: str) -> dict:
+def get_user(uname: str) -> dict | None:
     keys = get_column_names('user_details')
 
     with UseDatabase(dbconfig) as cursor:
@@ -34,7 +34,10 @@ def get_user(uname: str) -> dict:
         cursor.execute(_SQL, (uname,))
         values = cursor.fetchone()
 
-    return dict(zip(keys, values))
+    if not values:
+        return None
+    else:
+        return dict(zip(keys, values))
 
 
 def add_user(userdata: dict) -> None:
