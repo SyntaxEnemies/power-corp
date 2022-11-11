@@ -2,6 +2,7 @@ from flask import Flask, render_template, session, flash, redirect, url_for, req
 from auth import get_hash, check_hash, require_login
 # from crud import get_user
 import crud
+from typing import Literal
 
 app = Flask(__name__)
 app.config.from_envvar('CONFIG_FILE')
@@ -91,6 +92,16 @@ def logout() -> 'html | Redirect':
     return redirect(url_for('home'))
 
 
+@app.errorhandler(KeyError)
+def invalid_form(e) -> 'Redirect':
+    flash('Please fill all the required fields and try again')
+    return redirect(request.url)
+
+
+@app.errorhandler(404)
+def page_not_found(e) -> tuple[str, Literal[404]]:
+    return render_template('404.html'), 404
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
-

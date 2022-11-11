@@ -2,8 +2,6 @@
 {% extends 'base.html' %}
 {% block body %}
 
-
-
 <section class='vh-100' style="background-color: #312856;">
   <div class='container py-5 h-100'>
     <div class='row d-flex justify-content-center align-items-center h-100'>
@@ -20,24 +18,27 @@
                 <form style='text-align:center' method='POST' action='/login'>
 
                   <img class='mb-4' src="{{ url_for('static', filename='img/useravatar.png') }}" alt='' width='72' height='70' align-items-right>
-       <h1 class='h3 mb-3 fw-normal'><B> User Login</B></h1>
+                  <h1 class='h3 mb-3 fw-normal'><B> User Login</B></h1>
 
-    <div class='form-floating  mb-4'>
-      <input type='username' class='form-control' name='username' id='floatingInput' placeholder='name@example.com'>
-      <label for='floatingInput'><i>Username</i></label>
-    </div>
-    <div class='form-floating  mb-4'>
-      <input type='password' class='form-control' name='password' id='floatingPassword' placeholder='Password'>
-      <label for='floatingPassword'><i>Password</i></label>
-    </div>
-    <hr class='my-4'>
-    <div class='checkbox mb-3'>
-      <label>
-        <input type='checkbox' value='remember-me'> Remember me
-      </label>
-    </div>
-    <input class='w-100 btn btn-lg btn-primary' type='submit' value='Login'>
-    <p class='mt-5 mb-3 text-muted'>&copy; 2022-2024</p>
+                  <div class='form-floating  mb-4'>
+                    <input type='username' class='form-control' name='username' id='floatingInput' placeholder='name@example.com'>
+                    <label for='floatingInput'><i>Username</i></label>
+                  </div>
+
+                  <div class='form-floating  mb-4'>
+                    <input type='password' class='form-control' name='password' id='floatingPassword' placeholder='Password'>
+                    <label for='floatingPassword'><i>Password</i></label>
+                  </div>
+
+                  <hr class='my-4'>
+                  <div class='checkbox mb-3'>
+                    <label>
+                      <input type='checkbox' value='remember-me'> Remember me
+                    </label>
+                  </div>
+
+                  <input class='w-100 btn btn-lg btn-primary' type='submit' value='Login'>
+                  <p class='mt-5 mb-3 text-muted'>&copy; 2022-2024</p>
                 </form>
 
               </div>
