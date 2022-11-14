@@ -1,0 +1,20 @@
+<header>
+  <div class="px-3 py-2 shadow sticky-top" style="background-color: #312856;">
+    <div class="container">
+      <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+
+        <a href="/" class="d-flex align-items-center my-2 my-lg-0 me-lg-auto text-white text-decoration-none">
+          <img class='mb-10' src="{{ url_for('static', filename='img/logo.png') }}" alt='0' width='150' height='50' >
+        </a>
+
+        <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
+          <li><a href="{{ url_for('home') }}" class="nav-link text-secondary">Home </a></li>
+          <li><a href="#" class="nav-link active text-white">Services</a></li>
+          <li><a href="#" class="nav-link text-white">Contact</a></li>
+          <li><a href="{{ url_for('logout') }}" role="button" class=" w-100 btn btn-danger me-2">Logout</a></li>
+        </ul>
+
+      </div>
+    </div>
+  </div>
+</header>

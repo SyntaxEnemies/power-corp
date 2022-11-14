@@ -26,7 +26,7 @@ def get_column_names(table: str) -> list:
     return columns
 
 
-def get_user(uname: str) -> dict | None:
+def get_user(uname: str) -> 'dict | None':
     keys = get_column_names('user_details')
 
     with UseDatabase(dbconfig) as cursor:

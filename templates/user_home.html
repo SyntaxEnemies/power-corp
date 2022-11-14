@@ -1,0 +1,27 @@
+{% include 'base.html' %}
+
+{% block body %}
+  {% include 'user_header.html' %}
+  <div class="container-fluid">
+    <div class="row">
+      {% include 'user_sidebar.html' %}
+      <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+          <h1 class="h2">Bill Graph</h1>
+          <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group me-2">
+              <button type="button" class="btn btn-sm btn-outline-secondary">Generate Graph</button>
+              <button type="button" class="btn btn-sm btn-outline-secondary">Previous Graph</button>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
+              <span data-feather="calendar" class="align-text-bottom"></span>
+              Last Month
+            </button>
+          </div>
+        </div>
+
+        <img class='mb-4' src="{{ url_for('static', filename='img/graph.png') }}" alt='0' width='1200' height='550' >
+      </main>
+    </div>
+  </div>
+{% endblock %}
