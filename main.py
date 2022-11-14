@@ -82,7 +82,7 @@ def set_credentials() -> 'html | str':
 @app.route('/dashboard', methods=["GET"])
 @require_login
 def dashboard() -> 'html':
-    return render_template('dashboard.html')
+    return render_template('user_home.html')
 
 
 @app.route('/logout', methods=["GET"])
@@ -94,6 +94,8 @@ def logout() -> 'html | Redirect':
 
 @app.errorhandler(KeyError)
 def invalid_form(e) -> 'Redirect':
+    if 'registration' in session:
+        session.pop('registration')
     flash('Please fill all the required fields and try again')
     return redirect(request.url)
 
