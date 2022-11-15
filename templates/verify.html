@@ -1,0 +1,52 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> OTP Verification </title>
+	<!-- Bootstrap 5 CDN Link -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+	<!-- Custom CSS Link -->
+	<link rel="stylesheet" href="style.css">
+</head>
+<body> 
+    <section class="wrapper">
+		<div class="container">
+			<div class="col-sm-8 offset-sm-2 col-lg-6 offset-lg-3 col-xl-6 offset-xl-3 text-center">
+				
+				<form class="rounded bg-white shadow p-5">
+					<h3 class="text-dark fw-bolder fs-4 mb-2"> OTP Verification</h3>
+
+					<div class="fw-normal text-muted mb-4">
+						Enter the verification code we send at your email
+					</div>  
+
+                    
+					<div class="otp_input text-start mb-2">
+                        <label for="digit">Type your 6 digit security code</label>
+						<div class="d-flex align-items-center justify-content-between mt-2">
+                            <input type="text" class="form-control" placeholder="">
+                            <input type="text" class="form-control" placeholder="">
+                            <input type="text" class="form-control" placeholder="">
+                            <input type="text" class="form-control" placeholder="">
+                            <input type="text" class="form-control" placeholder="">
+                            <input type="text" class="form-control" placeholder="">
+                        </div> 
+					</div>  
+
+					<button type="submit" class="btn btn-primary submit_btn my-4">Submit</button> 
+
+                    <div class="fw-normal text-muted mb-2">
+						Didn’t get the code ? <a href="#" class="text-primary fw-bold text-decoration-none">Resend</a>
+					</div>
+				</form>
+			</div>
+		</div>
+	</section>
+</body>
+</html>
+
