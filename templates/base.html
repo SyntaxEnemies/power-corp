@@ -17,13 +17,13 @@
     <!--Favicon-->
     <link rel='shortcut icon' href="{{ url_for('static', filename='img/favicon.ico') }}">
   </head>
-  <body >
+
+  <body>
     {% for message in get_flashed_messages() %}
-      <span class='container alert alert-danger alert-dismissible  fade show fixed-top' role='alert' width: auto;>
+      <div class='container alert alert-warning alert-dismissible fade show fixed-top' role='alert'>
         {{message}}
-        
         <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
-      </span>
+      </div>
     {% endfor %}
 
     {% block body %}
