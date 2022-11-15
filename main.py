@@ -1,8 +1,13 @@
 from flask import Flask, render_template, session, flash, redirect, url_for, request
+from random import randint
 from auth import get_hash, check_hash, require_login
 # from crud import get_user
 import crud
 from typing import Literal
+from mailhandler import MailHandler
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
 
 app = Flask(__name__)
 app.config.from_envvar('CONFIG_FILE')
@@ -54,6 +59,30 @@ def register() -> 'html | Redirect':
                                    'gender':     request.form['gender'],
                                    'mobile_num': request.form['mobile_num'],
                                    'email':      request.form.get('email'), }
+
+        # create html message
+        message = MIMEMultipart('alternative')
+        message['From'] = app.config['MAIL_ADDRESS']
+        message['To'] = session['registration']['email']
+        message['Subject'] = 'Confirm email with OTP'
+
+        with open('templates/otp.html', 'r') as html_file:
+            html = html_file.read()
+
+        html = MIMEText(html, 'html')
+        message.attach(html)
+
+        otp = randint(1000, 9999)
+
+        with MailHandler(sender_email=app.config['MAIL_ADDRESS'],
+                         password=app.config['MAIL_PASSWORD'],
+                         port=app.config['SMTP_PORT'],
+                         smtp_server=app.config['SMTP_SERVER']) as server:
+
+            server.sendmail(app.config['MAIL_ADDRESS'],
+                            session['registration']['email'],
+                            message.as_string().format(opt_number=otp))
+
         return redirect(url_for('set_credentials'))
         # print(registration)
 
@@ -97,11 +126,13 @@ def invalid_form(e) -> 'Redirect':
     if 'registration' in session:
         session.pop('registration')
     flash('Please fill all the required fields and try again')
+    print(e)
     return redirect(request.url)
 
 
 @app.errorhandler(404)
 def page_not_found(e) -> tuple[str, Literal[404]]:
+    print(e)
     return render_template('404.html'), 404
 
 
