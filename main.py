@@ -1,4 +1,4 @@
-from flask import Flask, render_template, session, flash, redirect, url_for, request
+from flask import Flask, render_template, render_template_string, session, flash, redirect, url_for, request
 from random import randint
 from auth import get_hash, check_hash, require_login
 # from crud import get_user
@@ -60,19 +60,19 @@ def register() -> 'html | Redirect':
                                    'mobile_num': request.form['mobile_num'],
                                    'email':      request.form.get('email'), }
 
-        # create html message
+        # random four digit otp
+        otp = randint(1000, 9999)
+
+        # construct multipart email
         message = MIMEMultipart('alternative')
         message['From'] = app.config['MAIL_ADDRESS']
         message['To'] = session['registration']['email']
-        message['Subject'] = 'Confirm email with OTP'
+        message['Subject'] = '[{}] - Confirm email with OTP'.format(otp)
 
-        with open('templates/otp.html', 'r') as html_file:
-            html = html_file.read()
-
-        html = MIMEText(html, 'html')
+        # html attachment
+        html_file = render_template('otp.html', name=session['registration']['first_name'], mail_prefix=session['registration']['email'][:5], otp=otp)
+        html = MIMEText(html_file, 'html')
         message.attach(html)
-
-        otp = randint(1000, 9999)
 
         with MailHandler(sender_email=app.config['MAIL_ADDRESS'],
                          password=app.config['MAIL_PASSWORD'],
