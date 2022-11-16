@@ -25,3 +25,9 @@ class MailHandler():
 
         if exc_type:
             raise exc_type(exc_value)
+
+
+def obfuscate_mail(mail_address):
+    username, domain = mail_address.split('@')
+    return '{0}*****@{1}'.format(username[0:4], domain)
+
