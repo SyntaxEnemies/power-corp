@@ -1,10 +1,9 @@
 from flask import Flask, render_template, render_template_string, session, flash, redirect, url_for, request
 from random import randint
 from auth import get_hash, check_hash, require_login
-# from crud import get_user
 import crud
 from typing import Literal
-from mailhandler import MailHandler
+from mailutils import MailHandler, obfuscate_mail
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
@@ -70,7 +69,10 @@ def register() -> 'html | Redirect':
         message['Subject'] = '[{}] - Confirm email with OTP'.format(otp)
 
         # html attachment
-        html_file = render_template('otp.html', name=session['registration']['first_name'], mail_prefix=session['registration']['email'][:5], otp=otp)
+        html_file = render_template('otp.html',
+                                    user=session['registration']['first_name'],
+                                    mail=obfuscate_mail(session['registration']['email']),
+                                    otp=otp)
         html = MIMEText(html_file, 'html')
         message.attach(html)
 
@@ -81,7 +83,7 @@ def register() -> 'html | Redirect':
 
             server.sendmail(app.config['MAIL_ADDRESS'],
                             session['registration']['email'],
-                            message.as_string().format(opt_number=otp))
+                            message.as_string())
 
         return redirect(url_for('set_credentials'))
         # print(registration)
@@ -119,6 +121,12 @@ def logout() -> 'html | Redirect':
     if 'logged_in' in session:
         session.pop('logged_in')
     return redirect(url_for('home'))
+
+@app.route('/verify/mail')
+def verify_mail():
+    return(render_template('verify_email.html',
+                           the_title='Verify Email',
+                           mail=session['registration']['email']))
 
 
 @app.errorhandler(KeyError)
