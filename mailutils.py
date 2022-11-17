@@ -1,8 +1,10 @@
 import smtplib, ssl
-
+from flask import render_template
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 class MailHandler():
-    def __init__(self, sender_email, password, port, smtp_server) -> None:
+    def __init__(self, sender_email: str, password: str, port: int, smtp_server: str) -> None:
         # mail credentials to use for sending
         self.sender_email = sender_email
         self.password = password
@@ -27,7 +29,20 @@ class MailHandler():
             raise exc_type(exc_value)
 
 
-def obfuscate_mail(mail_address):
+def obfuscate_mail_address(mail_address: str) -> str:
     username, domain = mail_address.split('@')
     return '{0}*****@{1}'.format(username[0:4], domain)
 
+def compose_html_mail(sender: str, receiver: str, subject: str, template: str, **format_spec) -> str:
+    message = MIMEMultipart('alternative')
+    message['From'] = sender
+    message['To'] = receiver
+    message['Subject'] = subject
+
+    # html attachment
+    html_content = render_template(template, **format_spec)
+    # print(html_content)
+    html = MIMEText(html_content, 'html')
+    message.attach(html)
+
+    return message.as_string()

@@ -1,11 +1,9 @@
-from flask import Flask, render_template, render_template_string, session, flash, redirect, url_for, request
+from flask import Flask, render_template, session, flash, redirect, url_for, request
 from random import randint
 from auth import get_hash, check_hash, require_login
 import crud
 from typing import Literal
-from mailutils import MailHandler, obfuscate_mail
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
+from mailutils import MailHandler, obfuscate_mail_address, compose_html_mail
 
 
 app = Flask(__name__)
@@ -59,22 +57,21 @@ def register() -> 'html | Redirect':
                                    'mobile_num': request.form['mobile_num'],
                                    'email':      request.form.get('email'), }
 
-        # random four digit otp
-        otp = randint(1000, 9999)
+        # random six digit otp to verify email
+        session['registration']['otp'] = randint(1000, 9999)
 
-        # construct multipart email
-        message = MIMEMultipart('alternative')
-        message['From'] = app.config['MAIL_ADDRESS']
-        message['To'] = session['registration']['email']
-        message['Subject'] = '[{}] - Confirm email with OTP'.format(otp)
+        # construct html email message
+        msg_subject = '[{}] - Confirm email with OTP'
+        msg_subject = msg_subject.format(session['registration']['otp'])
 
-        # html attachment
-        html_file = render_template('otp.html',
+        message = compose_html_mail(sender=app.config['MAIL_ADDRESS'],
+                                    receiver=session['registration']['email'],
+                                    subject=msg_subject,
+                                    template='otp.html',
                                     user=session['registration']['first_name'],
-                                    mail=obfuscate_mail(session['registration']['email']),
-                                    otp=otp)
-        html = MIMEText(html_file, 'html')
-        message.attach(html)
+                                    mail=obfuscate_mail_address(
+                                        session['registration']['email']),
+                                    otp=session['registration']['otp'])
 
         with MailHandler(sender_email=app.config['MAIL_ADDRESS'],
                          password=app.config['MAIL_PASSWORD'],
@@ -83,7 +80,7 @@ def register() -> 'html | Redirect':
 
             server.sendmail(app.config['MAIL_ADDRESS'],
                             session['registration']['email'],
-                            message.as_string())
+                            message)
 
         return redirect(url_for('set_credentials'))
         # print(registration)
