@@ -1,8 +1,11 @@
-from flask import Flask, render_template, session, flash, redirect, url_for, request
 from random import randint
+from re import fullmatch
+from typing import Literal
+
+from flask import Flask, render_template, session, flash, redirect, url_for, request
+
 from auth import get_hash, check_hash, require_login
 import crud
-from typing import Literal
 from mailutils import MailHandler, obfuscate_mail_address, compose_html_mail
 
 
@@ -21,29 +24,29 @@ def home() -> 'html':
 def login() -> 'html | Redirect':
     if 'logged_in' in session:
         return redirect(url_for('dashboard'))
-    else:
-        if request.method == 'POST':
-            input_username = request.form['username']
-            input_password = request.form['password']
-            user = crud.get_user(input_username)
 
-            if user:
-                # print(user)
-                if check_hash(input_password, user['password']):
-                    session['logged_in'] = True
-                    msg = 'Login successful for {}'.format(user['username'])
-                    flash(msg)
-                    return redirect(url_for('dashboard'))
-                    # return '<h2>{}</h2>'.format(msg)
-                else:
-                    flash('Invalid password')
-                    return redirect(url_for('login'))
-                    # return '<h2>Invalid password</h2>'
-            else:
-                flash('Invalid username')
-                return redirect(url_for('login'))
-                # return '<h2>Invalid username</h2>'
-        return render_template('login.html', the_title='Login')
+    if request.method == 'POST':
+        input_username = request.form['username']
+        input_password = request.form['password']
+        user = crud.get_user(input_username)
+
+        if user:
+            # print(user)
+            if check_hash(input_password, user['password']):
+                session['logged_in'] = True
+                msg = 'Login successful for {0}'.format(user['username'])
+                flash(msg)
+                return redirect(url_for('dashboard'))
+                # return '<h2>{}</h2> '.format(msg)
+
+            flash('Invalid password')
+            return redirect(url_for('login'))
+            # return '<h2>Invalid password</h2>'
+
+        flash('Invalid username')
+        return redirect(url_for('login'))
+        # return '<h2>Invalid username</h2>'
+    return render_template('login.html', the_title='Login')
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -58,7 +61,7 @@ def register() -> 'html | Redirect':
                                    'email':      request.form.get('email'), }
 
         # random six digit otp to verify email
-        session['registration']['otp'] = randint(1000, 9999)
+        session['registration']['otp'] = randint(100000, 999999)
 
         # construct html email message
         msg_subject = '[{}] - Confirm email with OTP'
@@ -69,8 +72,7 @@ def register() -> 'html | Redirect':
                                     subject=msg_subject,
                                     template='otp.html',
                                     user=session['registration']['first_name'],
-                                    mail=obfuscate_mail_address(
-                                        session['registration']['email']),
+                                    mail=obfuscate_mail_address(session['registration']['email']),
                                     otp=session['registration']['otp'])
 
         with MailHandler(sender_email=app.config['MAIL_ADDRESS'],
@@ -82,29 +84,50 @@ def register() -> 'html | Redirect':
                             session['registration']['email'],
                             message)
 
-        return redirect(url_for('set_credentials'))
+        return redirect(url_for('get_otp'))
         # print(registration)
-
     return render_template('register.html', the_title='New Connection')
 
 
+@app.route('/otp/check', methods=['GET', 'POST'])
+def get_otp() -> 'html':
+    if 'registration' in session:
+        if request.method == 'POST':
+            input_otp = ''
+            for k, v in request.form.items():
+                if fullmatch('d[0-9]+', k):
+                    input_otp += v
+            input_otp = int(input_otp)
+
+            if input_otp == session['registration']['otp']:
+                return redirect('set_credentials')
+
+            flash('Incorrect OTP')
+            return redirect('get_otp')
+
+        return (render_template('verify_email.html',
+                                the_title='Verify Email',
+                                mail=obfuscate_mail_address(session['registration']['email'])))
+    return redirect(url_for('register'))
+
+
 @app.route('/signup', methods=['GET', 'POST'])
-def set_credentials() -> 'html | str':
+def set_credentials() -> 'html | Redirect':
     if 'registration' in session:
         if request.method == 'POST':
             session['registration']['username'] = request.form['uname']
             session['registration']['password'] = get_hash(request.form['passwd'])
 
             crud.add_user(session['registration'])
-            msg = ( 'Dear {user}, your request for a new connection'
-                    'has been received. You can expect'
-                    'further developments within 24 hours' )
+            msg = ('Dear {user}, your request for a new'
+                   'connection has been received. You can'
+                   'expect further developments within 24 hours')
             flash(msg.format(user=session['registration']['first_name']))
             return redirect(url_for('home'))
             # return '<h2>Successfully added {} </h2>'.format(session['registration']['first_name'])
-    else:
-        return redirect(url_for('register'))
-    return render_template('signup.html', the_title='Set Account Credentials')
+        return render_template('signup.html', the_title='Set Account Credentials')
+
+    return redirect(url_for('register'))
 
 
 @app.route('/dashboard', methods=["GET"])
@@ -118,12 +141,6 @@ def logout() -> 'html | Redirect':
     if 'logged_in' in session:
         session.pop('logged_in')
     return redirect(url_for('home'))
-
-@app.route('/verify/mail')
-def verify_mail():
-    return(render_template('verify_email.html',
-                           the_title='Verify Email',
-                           mail=session['registration']['email']))
 
 
 @app.errorhandler(KeyError)

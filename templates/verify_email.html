@@ -2,99 +2,97 @@
 {% extends 'base.html' %}
 
 {% block body %}
-<style>
-/* Variables */
-:root{
-  --primary-font-family: 'Poppins', sans-serif;
-  --light-white:#f5f8fa;
-  --gray:#5e6278;
-  --gray-1:#e3e3e3;
-}
-body{
-  font-family:var(--primary-font-family);
-  font-size: 14px;
+  <style>
+  /* Variables */
+  :root{
+    --primary-font-family: 'Poppins', sans-serif;
+    --light-white:#f5f8fa;
+    --gray:#5e6278;
+    --gray-1:#e3e3e3;
+  }
+
+  body{
+    font-family:var(--primary-font-family);
+    font-size: 14px;
     background-color: #312856;
-} 
-
-/* Main CSS OTP Verification New Changing */ 
-.wrapper{
-  padding:130px 0 100px;
-  
-}
-.wrapper .logo img{
-  max-width:40%;
-}
-.wrapper input{
-  background-color:var(--light-white);
-  border-color:var(--light-white);
-  color:var(--gray);
-}
-.wrapper input:focus{
-  box-shadow: none;
-}
-
-.wrapper .submit_btn{
-  padding:10px 15px;
-  font-weight:500;
-}
-
-.wrapper .submit_btn:focus{
-  box-shadow: none;
-}
-
-
-/* OTP Verification CSS */
-.wrapper .otp_input input{
-  width:14%;
-  height:70px;
-  text-align: center;
-  font-size: 20px;
-  font-weight: 600;
-}
-
-@media (max-width:1200px){
-  .wrapper .otp_input input{ 
-    height:50px; 
   }
-}
-@media (max-width:767px){
-  .wrapper .otp_input input{ 
-    height:40px; 
+
+  /* Main CSS OTP Verification New Changing */ 
+  .wrapper{
+    padding:130px 0 100px;
   }
-}
-</style>
+  .wrapper .logo img{
+    max-width:40%;
+  }
+  .wrapper input{
+    background-color:var(--light-white);
+    border-color:var(--light-white);
+    color:var(--gray);
+  }
+  .wrapper input:focus{
+    box-shadow: none;
+  }
+  .wrapper .submit_btn{
+    padding:10px 15px;
+    font-weight:500;
+  }
+  .wrapper .submit_btn:focus{
+    box-shadow: none;
+  }
+
+  /* OTP Verification CSS */
+  .wrapper .otp_input input{
+    width:14%;
+    height:70px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  @media (max-width:1200px){
+    .wrapper .otp_input input{ 
+      height:50px; 
+    }
+  }
+  @media (max-width:767px){
+    .wrapper .otp_input input{ 
+      height:40px; 
+    }
+  }
+  </style>
 
   <section class="wrapper" >
-        <div class="container">
-            <div class="col-sm-8 offset-sm-2 col-lg-6 offset-lg-3 col-xl-6 offset-xl-3 text-center">
-                
-                <form class="rounded bg-white shadow p-5">
-                    <h3 class="text-dark fw-bolder fs-4 mb-2"> OTP Verification</h3>
+    <div class="container">
+      <div class="col-sm-8 offset-sm-2 col-lg-6 offset-lg-3 col-xl-6 offset-xl-3 text-center">
 
-                    <div class="fw-normal text-muted mb-4">
-                        Enter the verification code we send at your email {{ mail }}
-                    </div>  
+        <form class="rounded bg-white shadow p-5" action="/verify/check" method="POST">
+          <h3 class="text-dark fw-bolder fs-4 mb-2"> OTP Verification</h3>
 
-          
-                    <div class="otp_input text-start mb-2">
+          <div class="fw-normal text-muted mb-4">
+            Enter the verification code we send at your email
+            <br>
+            <strong style="font-size: 130%">{{ mail }}</strong></p>
+          </div>
+
+          <div class="otp_input text-start mb-2">
             <label for="digit">Type your 6 digit security code</label>
-                        <div class="d-flex align-items-center justify-content-between mt-2">
-              <input type="text" class="form-control" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'');" />
-              <input type="text" class="form-control" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'');" />
-              <input type="text" class="form-control" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'');" />
-              <input type="text" class="form-control" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'');" />
-              <input type="text" class="form-control" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'');" />
-              <input type="text" class="form-control" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'');" />
-            </div> 
-                    </div>  
+            <div class="d-flex align-items-center justify-content-between mt-2">
+              <input type="text" class="form-control" name="d0" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'');" autofocus="autofocus" />
+              <input type="text" class="form-control" name="d1" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'');" />
+              <input type="text" class="form-control" name="d2" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'');" />
+              <input type="text" class="form-control" name="d3" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'');" />
+              <input type="text" class="form-control" name="d4" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'');" />
+              <input type="text" class="form-control" name="d5" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'');" />
+            </div>
+          </div>
 
-                    <button type="submit" class="btn btn-primary submit_btn my-4">Submit</button> 
+          <button type="submit" class="btn btn-primary submit_btn my-4">Submit</button> 
 
           <div class="fw-normal text-muted mb-2">
-                        Didn’t get the code ? <a href="#" class="text-primary fw-bold text-decoration-none">Resend</a>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </section>
+            Didn’t get the code ? <a href="#" class="text-primary fw-bold text-decoration-none">Resend</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
 {% endblock body %}
