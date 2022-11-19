@@ -6,12 +6,16 @@ from flask import Flask, render_template, session, flash, redirect, url_for, req
 
 import crud
 from auth import get_hash, check_hash, require_login
-from mailutils import MailHandler, obfuscate_mail_address, compose_html_mail
-
+from mailutils import create_mail_handler, obfuscate_mail_address, compose_html_mail
 
 app = Flask(__name__)
 app.config.from_envvar('CONFIG_FILE')
 # print(app.config)
+
+mail_handler = create_mail_handler(sender_email=app.config['MAIL_ADDRESS'],
+                                   password=app.config['MAIL_PASSWORD'],
+                                   port=app.config['SMTP_PORT'],
+                                   smtp_server=app.config['SMTP_SERVER'])
 
 
 @app.route('/', methods=['GET'])
@@ -38,14 +42,11 @@ def login() -> 'html | Redirect':
                 # flash(msg)
                 return redirect(url_for('dashboard'))
                 # return '<h2>{}</h2> '.format(msg)
-
             flash('Invalid password')
-            return redirect(url_for('login'))
             # return '<h2>Invalid password</h2>'
-
-        flash('Invalid username')
-        return redirect(url_for('login'))
-        # return '<h2>Invalid username</h2>'
+        else:
+            flash('Invalid username')
+            # return '<h2>Invalid username</h2>'
     return render_template('login.html', the_title='Login')
 
 
@@ -84,14 +85,9 @@ def send_otp() -> 'Redirect':
                                     mail=obfuscate_mail_address(session['registration']['email']),
                                     otp=session['verification']['otp'])
 
-        with MailHandler(sender_email=app.config['MAIL_ADDRESS'],
-                         password=app.config['MAIL_PASSWORD'],
-                         port=app.config['SMTP_PORT'],
-                         smtp_server=app.config['SMTP_SERVER']) as server:
-
-            server.sendmail(app.config['MAIL_ADDRESS'],
-                            session['registration']['email'],
-                            message)
+        mail_handler.sendmail(app.config['MAIL_ADDRESS'],
+                              session['registration']['email'],
+                              message)
 
         return redirect(url_for('check_otp'))
     return redirect(url_for('register'))
@@ -113,8 +109,6 @@ def check_otp() -> 'html':
                 return redirect(url_for('set_credentials'))
 
             flash('Incorrect OTP')
-            return redirect(url_for('check_otp'))
-
         return (render_template('verify_email.html',
                                 the_title='Verify Email',
                                 mail=obfuscate_mail_address(session['registration']['email'])
@@ -140,7 +134,6 @@ def set_credentials() -> 'html | Redirect':
                 session.pop('registration')
                 session.pop('verification')
                 return redirect(url_for('home'))
-                # return '<h2>Successfully added {} </h2>'.format(session['registration']['first_name'])
             return render_template('signup.html', the_title='Set Account Credentials')
 
         flash('Please verify your email.')
