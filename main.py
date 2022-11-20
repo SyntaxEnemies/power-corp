@@ -5,7 +5,7 @@ from typing import Literal
 from flask import Flask, render_template, session, flash, redirect, url_for, request
 
 import crud
-from auth import get_hash, check_hash, require_login
+from authutils import get_hash, check_hash, require_login
 from mailutils import create_mail_handler, obfuscate_mail_address, compose_html_mail
 
 app = Flask(__name__)
@@ -21,21 +21,27 @@ mail_handler = create_mail_handler(sender_email=app.config['MAIL_ADDRESS'],
 @app.route('/', methods=['GET'])
 @app.route('/home', methods=['GET'])
 def home() -> 'html':
+    """Render the webapp homepage."""
     return render_template('home.html', the_title='Home')
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login() -> 'html | Redirect':
+    """Login a user or redirect to dashboard if already logged in."""
+    # check if already logged in
     if 'logged_in' in session:
         return redirect(url_for('dashboard'))
 
     if request.method == 'POST':
         input_username = request.form['username']
         input_password = request.form['password']
+
+        # Return candidate user's record from the database (if any)
         user = crud.get_user(input_username)
 
         if user:
             # print(user)
+            # match given password's hash against one from the record
             if check_hash(input_password, user['password']):
                 session['logged_in'] = True
                 # msg = 'Login successful for {}'.format(user['username'])
@@ -52,7 +58,9 @@ def login() -> 'html | Redirect':
 
 @app.route('/register', methods=['GET', 'POST'])
 def register() -> 'html | Redirect':
+    """Render and accept account registration forms."""
     if request.method == 'POST':
+        # store registration form in cookie for lookup in later requests
         session['registration'] = {'first_name': request.form['fname'],
                                    'last_name':  request.form['lname'],
                                    'age':        request.form['age'],
@@ -71,6 +79,8 @@ def register() -> 'html | Redirect':
 
 @app.route('/otp/send', methods=['GET', 'POST'])
 def send_otp() -> 'Redirect':
+    """Send/Resend HTML message containing OTP on registration email."""
+    # Check if registration is initiated
     if 'registration' in session:
         # construct html email message
         msg_subject = '[{}] - Confirm email with OTP'
@@ -95,10 +105,12 @@ def send_otp() -> 'Redirect':
 
 @app.route('/otp/check', methods=['GET', 'POST'])
 def check_otp() -> 'html':
+    """Verify user if OTP is corrected."""
     if 'registration' in session:
         if request.method == 'POST':
             input_otp = ''
-            for k, v in request.form.items():
+            # Sort and concatenate the digits from the OTP input form
+            for k, v in sorted(request.form.items()):
                 if fullmatch('d[0-9]+', k):
                     input_otp += v
             input_otp = int(input_otp)
@@ -118,19 +130,24 @@ def check_otp() -> 'html':
 
 @app.route('/signup', methods=['GET', 'POST'])
 def set_credentials() -> 'html | Redirect':
+    """Set login credentials for a verified registration."""
+    # Check if registered and verified
     if 'registration' in session and 'verification' in session:
         if 'verified' in session['verification']:
             if request.method == 'POST':
                 session['registration']['username'] = request.form['uname']
                 session['registration']['password'] = get_hash(request.form['passwd'])
 
+                # Commit the registration into a database record
                 crud.add_user(session['registration'])
 
+                # Confirmation message to user
                 msg = ('Dear {user}, your request for a new'
                        'connection has been received. You can'
                        'expect further developments within 24 hours')
                 flash(msg.format(user=session['registration']['first_name']))
 
+                # Remove no longer needed data session cookie
                 session.pop('registration')
                 session.pop('verification')
                 return redirect(url_for('home'))
@@ -144,11 +161,13 @@ def set_credentials() -> 'html | Redirect':
 @app.route('/dashboard', methods=["GET"])
 @require_login
 def dashboard() -> 'html':
+    """Render a logged in user's dashboard."""
     return render_template('user_home.html')
 
 
 @app.route('/logout', methods=["GET"])
 def logout() -> 'html | Redirect':
+    """Logout if logged in then go to homepage."""
     if 'logged_in' in session:
         session.pop('logged_in')
     return redirect(url_for('home'))
@@ -163,6 +182,7 @@ def invalid_form(e) -> 'Redirect':
 
 @app.errorhandler(404)
 def page_not_found(e) -> tuple[str, Literal[404]]:
+    """Render custom 404 template."""
     print(e)
     return render_template('404.html'), 404
 
