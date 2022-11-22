@@ -1,8 +1,8 @@
--- MariaDB dump 10.19  Distrib 10.9.3-MariaDB, for Linux (x86_64)
+-- MariaDB dump 10.19  Distrib 10.9.4-MariaDB, for Linux (x86_64)
 --
 -- Host: localhost    Database: POWER_CORP
 -- ------------------------------------------------------
--- Server version	10.9.3-MariaDB
+-- Server version	10.9.4-MariaDB
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -14,6 +14,25 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `card_details`
+--
+
+DROP TABLE IF EXISTS `card_details`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `card_details` (
+  `uid` int(11) NOT NULL,
+  `name` varchar(32) NOT NULL,
+  `number` decimal(16,0) NOT NULL,
+  `cvv` decimal(3,0) NOT NULL,
+  `expiry` date NOT NULL,
+  PRIMARY KEY (`number`),
+  KEY `uid` (`uid`),
+  CONSTRAINT `card_details_ibfk_1` FOREIGN KEY (`uid`) REFERENCES `user_details` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `consumption`
@@ -43,23 +62,43 @@ DROP TABLE IF EXISTS `emp_details`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `emp_details` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `first_name` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `last_name` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `first_name` varchar(128) NOT NULL,
+  `last_name` varchar(128) NOT NULL,
   `age` int(11) NOT NULL CHECK (`age` >= 18),
-  `address` varchar(256) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `gender` varchar(8) COLLATE utf8mb4_unicode_ci NOT NULL CHECK (`gender` in ('Male','Female','Unsaid')),
+  `address` varchar(256) NOT NULL,
+  `gender` varchar(8) NOT NULL CHECK (`gender` in ('Male','Female','Unsaid')),
   `join_date` timestamp NOT NULL DEFAULT current_timestamp(),
-  `username` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `password` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email` varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL CHECK (`email` like '%@%.%'),
+  `username` varchar(64) NOT NULL,
+  `password` varchar(64) NOT NULL,
+  `email` varchar(128) DEFAULT NULL CHECK (`email` like '%@%.%'),
   `mobile_num` decimal(10,0) NOT NULL,
-  `role` varchar(8) COLLATE utf8mb4_unicode_ci NOT NULL CHECK (`role` in ('Scout','Cashier','Admin')),
+  `role` varchar(8) NOT NULL CHECK (`role` in ('Scout','Cashier','Admin')),
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `password` (`password`),
   UNIQUE KEY `mobile_num` (`mobile_num`),
   UNIQUE KEY `username_2` (`username`),
   UNIQUE KEY `password_2` (`password`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `payment_history`
+--
+
+DROP TABLE IF EXISTS `payment_history`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `payment_history` (
+  `trans_id` int(11) NOT NULL AUTO_INCREMENT,
+  `uid` int(11) NOT NULL,
+  `amount` decimal(13,2) NOT NULL,
+  `tstamp` timestamp NOT NULL DEFAULT current_timestamp(),
+  `mode` varchar(10) NOT NULL CHECK ('mode' in ('Credit Card','Debit Card')),
+  `note` varchar(64) DEFAULT NULL,
+  PRIMARY KEY (`trans_id`),
+  KEY `uid` (`uid`),
+  CONSTRAINT `payment_history_ibfk_1` FOREIGN KEY (`uid`) REFERENCES `user_details` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -72,23 +111,23 @@ DROP TABLE IF EXISTS `user_details`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user_details` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `first_name` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `last_name` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `first_name` varchar(128) NOT NULL,
+  `last_name` varchar(128) NOT NULL,
   `age` int(11) NOT NULL CHECK (`age` >= 18),
-  `address` varchar(256) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `gender` varchar(8) COLLATE utf8mb4_unicode_ci NOT NULL CHECK (`gender` in ('Male','Female','Unsaid')),
+  `address` varchar(256) NOT NULL,
+  `gender` varchar(8) NOT NULL CHECK (`gender` in ('Male','Female','Unsaid')),
   `issue_date` timestamp NOT NULL DEFAULT current_timestamp(),
-  `username` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `password` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `username` varchar(64) NOT NULL,
+  `password` varchar(64) NOT NULL,
   `mobile_num` decimal(10,0) NOT NULL,
-  `email` varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL CHECK (`email` like '%@%.%'),
+  `email` varchar(128) DEFAULT NULL CHECK (`email` like '%@%.%'),
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `password` (`password`),
   UNIQUE KEY `mobile_num` (`mobile_num`),
   UNIQUE KEY `password_2` (`password`),
   UNIQUE KEY `username_2` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -100,4 +139,4 @@ CREATE TABLE `user_details` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-10-29 17:44:26
+-- Dump completed on 2022-11-22 14:11:32
