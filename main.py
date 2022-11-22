@@ -71,15 +71,15 @@ def register() -> 'html | Redirect':
 
         # random six digit OTP to verify email
         session['verification'] = {'otp': randint(100000, 999999)}
-        return redirect(url_for('send_otp'))
+        return redirect(url_for('verify'))
 
         # print(session['registration'])
     return render_template('register.html', the_title='New Connection')
 
 
-@app.route('/otp/send', methods=['GET', 'POST'])
-def send_otp() -> 'Redirect':
-    """Send/Resend HTML message containing OTP on registration email."""
+@app.route('/verify', methods=['GET', 'POST'])
+def verify() -> 'Redirect':
+    """Verify registration by sending OTP on email."""
     # Check if registration is initiated
     if 'registration' in session:
         # construct html email message
@@ -99,14 +99,6 @@ def send_otp() -> 'Redirect':
                               session['registration']['email'],
                               message)
 
-        return redirect(url_for('check_otp'))
-    return redirect(url_for('register'))
-
-
-@app.route('/otp/check', methods=['GET', 'POST'])
-def check_otp() -> 'html':
-    """Verify user if OTP is corrected."""
-    if 'registration' in session:
         if request.method == 'POST':
             input_otp = ''
             # Sort and concatenate the digits from the OTP input form
@@ -121,10 +113,10 @@ def check_otp() -> 'html':
                 return redirect(url_for('set_credentials'))
 
             flash('Incorrect OTP')
-        return (render_template('verify_email.html',
+        return render_template('verify_email.html',
                                 the_title='Verify Email',
                                 mail=obfuscate_mail_address(session['registration']['email'])
-                                ))
+                                )
     return redirect(url_for('register'))
 
 
@@ -154,7 +146,7 @@ def set_credentials() -> 'html | Redirect':
             return render_template('signup.html', the_title='Set Account Credentials')
 
         flash('Please verify your email.')
-        return redirect(url_for('send_otp'))
+        return redirect(url_for('verify'))
     return redirect(url_for('register'))
 
 

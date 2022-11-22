@@ -65,7 +65,7 @@
     <div class="container">
       <div class="col-sm-8 offset-sm-2 col-lg-6 offset-lg-3 col-xl-6 offset-xl-3 text-center">
 
-          <form class="rounded bg-white shadow p-5" action="{{ url_for('check_otp') }}" method="POST">
+          <form class="rounded bg-white shadow p-5" action="{{ url_for('verify') }}" method="POST">
           <h3 class="text-dark fw-bolder fs-4 mb-2"> OTP Verification</h3>
 
           <div class="fw-normal text-muted mb-4">
@@ -89,7 +89,7 @@
           <button type="submit" class="btn btn-primary submit_btn my-4">Submit</button> 
 
           <div class="fw-normal text-muted mb-2">
-              Didn’t get the code ? <a href="{{ url_for('send_otp') }}" class="text-primary fw-bold text-decoration-none">Resend</a>
+              Didn’t get the code ? <a href="{{ url_for('verify') }}" class="text-primary fw-bold text-decoration-none">Resend</a>
           </div>
         </form>
       </div>

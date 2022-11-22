@@ -11,7 +11,7 @@ dbconfig = {k.removeprefix('DB_').lower(): v for k, v in app.config.items() if k
 def dict_to_sql(columns: list, table: str) -> str:
     """Prepare SQL insert query for table getting columns from list."""
     # Placeholders (%s) to use in prepared query string
-    placeholders = ', '.join(['%s'] * len(insert_data))
+    placeholders = ', '.join(['%s'] * len(columns))
     columns = ', '.join(columns)
 
     # Create prepared query string
