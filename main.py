@@ -61,19 +61,27 @@ def register() -> 'html | Redirect':
     """Render and accept account registration forms."""
     if request.method == 'POST':
         # store registration form in cookie for lookup in later requests
-        session['registration'] = {'first_name': request.form['fname'],
+        # Basic registration particulars
+        session['reg'] = {}
+        session['reg']['basic'] = {'first_name': request.form['fname'],
                                    'last_name':  request.form['lname'],
                                    'age':        request.form['age'],
                                    'address':    request.form['addr'],
                                    'gender':     request.form['gender'],
                                    'mobile_num': request.form['mobile_num'],
-                                   'email':      request.form.get('email'), }
+                                   'email':      request.form['email'], }
+        # credit/debit card details
+        session['reg']['card'] = {'name':   request.form['card-name'],
+                                  'type':   request.form['card-type'],
+                                  'number': request.form['card-number'],
+                                  'cvv':    request.form['card-cvv'],
+                                  'expiry': request.form['card-expiry']}
 
         # random six digit OTP to verify email
-        session['verification'] = {'otp': randint(100000, 999999)}
-        return redirect(url_for('verify'))
+        session['reg']['verify'] = {'otp': randint(100000, 999999)}
+        print(session['reg'])
 
-        # print(session['registration'])
+        return redirect(url_for('verify'))
     return render_template('register.html', the_title='New Connection')
 
 
@@ -81,22 +89,22 @@ def register() -> 'html | Redirect':
 def verify() -> 'Redirect':
     """Verify registration by sending OTP on email."""
     # Check if registration is initiated
-    if 'registration' in session:
+    if 'reg' in session:
         # construct html email message
         msg_subject = '[{}] - Confirm email with OTP'
-        msg_subject = msg_subject.format(session['verification']['otp'])
+        msg_subject = msg_subject.format(session['reg']['verify']['otp'])
         print('[ THE_MESSAGE_SUBJECT_IS ]: ', msg_subject)
 
         message = compose_html_mail(sender=app.config['MAIL_ADDRESS'],
-                                    receiver=session['registration']['email'],
+                                    receiver=session['reg']['basic']['email'],
                                     subject=msg_subject,
                                     template='otp.html',
-                                    user=session['registration']['first_name'],
-                                    mail=obfuscate_mail_address(session['registration']['email']),
-                                    otp=session['verification']['otp'])
+                                    user=session['reg']['basic']['first_name'],
+                                    mail=obfuscate_mail_address(session['reg']['basic']['email']),
+                                    otp=session['reg']['verify']['otp'])
 
         mail_handler.sendmail(app.config['MAIL_ADDRESS'],
-                              session['registration']['email'],
+                              session['reg']['basic']['email'],
                               message)
 
         if request.method == 'POST':
@@ -107,15 +115,15 @@ def verify() -> 'Redirect':
                     input_otp += v
             input_otp = int(input_otp)
 
-            if input_otp == session['verification']['otp']:
-                session['verification']['verified'] = True
+            if input_otp == session['reg']['verify']['otp']:
+                session['reg']['verify']['verified'] = True
                 session.modified = True
                 return redirect(url_for('set_credentials'))
 
             flash('Incorrect OTP')
         return render_template('verify_email.html',
                                 the_title='Verify Email',
-                                mail=obfuscate_mail_address(session['registration']['email'])
+                                mail=obfuscate_mail_address(session['reg']['basic']['email'])
                                 )
     return redirect(url_for('register'))
 
@@ -124,24 +132,23 @@ def verify() -> 'Redirect':
 def set_credentials() -> 'html | Redirect':
     """Set login credentials for a verified registration."""
     # Check if registered and verified
-    if 'registration' in session and 'verification' in session:
-        if 'verified' in session['verification']:
+    if 'reg' in session and 'verify' in session['reg']:
+        if 'verified' in session['reg']['verify']:
             if request.method == 'POST':
-                session['registration']['username'] = request.form['uname']
-                session['registration']['password'] = get_hash(request.form['passwd'])
+                session['reg']['basic']['username'] = request.form['uname']
+                session['reg']['basic']['password'] = get_hash(request.form['passwd'])
 
                 # Commit the registration into a database record
-                crud.add_user(session['registration'])
+                crud.add_user(session['reg']['basic'], session['reg']['card'])
 
                 # Confirmation message to user
                 msg = ('Dear {user}, your request for a new'
                        'connection has been received. You can'
                        'expect further developments within 24 hours')
-                flash(msg.format(user=session['registration']['first_name']))
+                flash(msg.format(user=session['reg']['basic']['first_name']))
 
                 # Remove no longer needed data session cookie
-                session.pop('registration')
-                session.pop('verification')
+                session.pop('reg')
                 return redirect(url_for('home'))
             return render_template('signup.html', the_title='Set Account Credentials')
 
@@ -165,11 +172,11 @@ def logout() -> 'html | Redirect':
     return redirect(url_for('home'))
 
 
-@app.errorhandler(KeyError)
-def invalid_form(e) -> 'Redirect':
-    flash('Please fill all the required fields and try again')
-    print(e)
-    return redirect(request.url)
+# @app.errorhandler(KeyError)
+# def invalid_form(e) -> 'Redirect':
+#     flash('Please fill all the required fields and try again')
+#     print(e)
+#     return redirect(request.url)
 
 
 @app.errorhandler(404)

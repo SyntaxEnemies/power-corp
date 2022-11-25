@@ -62,14 +62,27 @@ def get_user(uname: str) -> 'dict | None':
         return dict(zip(keys, values))
 
 
-def add_user(userdata: dict) -> None:
-    """Store new user given their data.
+def add_user(basic_data: dict, card_data: dict) -> None:
+    """Store a new user given their data.
 
     Arguments:
-    - userdata:
-        - keys: column names of 'user_details' table
-        - values: user data to insert in the corresponding columns
+    - basic_data: dict inserted as record into 'user_details' table
+    - card_data: credit/debit card record of the new user inserted
+                 into 'card_details' table
+
+    Both database insertions are atomic.
     """
     with UseDatabase(dbconfig) as cursor:
-        _SQL = dict_to_sql(list(userdata.keys()), 'user_details')
-        cursor.execute(_SQL, tuple(userdata.values()))
+        # Add basic user data into 'user_details' table
+        _SQL = dict_to_sql(list(basic_data.keys()), 'user_details')
+        cursor.execute(_SQL, tuple(basic_data.values()))
+
+        # cursor.lastrowid is value of last auto incremented item in DB
+        # It will equal the id of the user just inserted in above query
+        newuser_id = cursor.lastrowid
+
+        # Add new user's id to card_data before inserting as it is
+        # required as foreign key when inserting their card details.
+        card_data['uid'] = newuser_id
+        _SQL = dict_to_sql(list(card_data.keys()), 'card_details')
+        cursor.execute(_SQL, tuple(card_data.values()))
