@@ -28,6 +28,7 @@ CREATE TABLE `card_details` (
   `number` decimal(16,0) NOT NULL,
   `cvv` decimal(3,0) NOT NULL,
   `expiry` date NOT NULL,
+  `type` varchar(8) NOT NULL CHECK (`type` in ('credit','debit')),
   PRIMARY KEY (`number`),
   KEY `uid` (`uid`),
   CONSTRAINT `card_details_ibfk_1` FOREIGN KEY (`uid`) REFERENCES `user_details` (`id`)
@@ -120,14 +121,14 @@ CREATE TABLE `user_details` (
   `username` varchar(64) NOT NULL,
   `password` varchar(64) NOT NULL,
   `mobile_num` decimal(10,0) NOT NULL,
-  `email` varchar(128) DEFAULT NULL CHECK (`email` like '%@%.%'),
+  `email` varchar(256) NOT NULL CHECK (`email` like '%@%.%'),
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `password` (`password`),
   UNIQUE KEY `mobile_num` (`mobile_num`),
   UNIQUE KEY `password_2` (`password`),
   UNIQUE KEY `username_2` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -139,4 +140,4 @@ CREATE TABLE `user_details` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-11-22 14:11:32
+-- Dump completed on 2022-11-24 21:12:34
