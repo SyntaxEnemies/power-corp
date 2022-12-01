@@ -161,7 +161,7 @@ def set_credentials() -> 'html | Redirect':
 @require_login
 def dashboard() -> 'html':
     """Render a logged in user's dashboard."""
-    return render_template('user_home.html')
+    return render_template('user/home.html')
 
 
 @app.route('/logout', methods=["GET"])
