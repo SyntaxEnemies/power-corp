@@ -8,7 +8,7 @@ from DBcm import UseDatabase
 dbconfig = {k.removeprefix('DB_').lower(): v for k, v in app.config.items() if k.startswith('DB_')}
 
 
-def dict_to_sql(columns: list, table: str) -> str:
+def prepare_insert(columns: list, table: str) -> str:
     """Prepare SQL insert query for table getting columns from list."""
     # Placeholders (%s) to use in prepared query string
     placeholders = ', '.join(['%s'] * len(columns))
@@ -74,7 +74,7 @@ def add_user(basic_data: dict, card_data: dict) -> None:
     """
     with UseDatabase(dbconfig) as cursor:
         # Add basic user data into 'user_details' table
-        _SQL = dict_to_sql(list(basic_data.keys()), 'user_details')
+        _SQL = prepare_insert(list(basic_data.keys()), 'user_details')
         cursor.execute(_SQL, tuple(basic_data.values()))
 
         # cursor.lastrowid is value of last auto incremented item in DB
@@ -84,5 +84,5 @@ def add_user(basic_data: dict, card_data: dict) -> None:
         # Add new user's id to card_data before inserting as it is
         # required as foreign key when inserting their card details.
         card_data['uid'] = newuser_id
-        _SQL = dict_to_sql(list(card_data.keys()), 'card_details')
+        _SQL = prepare_insert(list(card_data.keys()), 'card_details')
         cursor.execute(_SQL, tuple(card_data.values()))
