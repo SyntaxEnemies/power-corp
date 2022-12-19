@@ -6,9 +6,9 @@ class UseDatabase():
     """Set up MariaDB cursor to execute queries and cleanup afterwards.
 
     Attributes:
-    - configuration: database configuration
-    - conn: MariaDB connection object
-    - cursor: MariaDB cursor object
+        - configuration: database configuration
+        - conn: MariaDB connection object
+        - cursor: MariaDB cursor object
     """
 
     def __init__(self, config: dict) -> None:

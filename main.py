@@ -1,13 +1,12 @@
 import datetime
 from random import randint
-from re import fullmatch
 from typing import Literal
 
 from flask import Flask, render_template, session, flash, redirect, url_for, request
 
 import crud
 from authutils import get_hash, check_hash, require_login
-from mailutils import create_mail_handler, obfuscate_mail_address, compose_html_mail
+from mailutils import create_mail_handler, obfuscate_mail_addr, compose_html_mail
 from validations import (range_validator, type_validator, regex_validator,
                          compare_validator, is_decimal_str, non_empty, is_email, is_correct_date,
                          is_username, is_password, ValidationError)
@@ -32,7 +31,7 @@ def home() -> 'html':
 @app.route('/login', methods=['GET', 'POST'])
 def login() -> 'html | Redirect':
     """Login a user or redirect to dashboard if already logged in."""
-    # check if already logged in
+    # Check if already logged in.
     if 'logged_in' in session:
         return redirect(url_for('dashboard'))
 
@@ -44,20 +43,18 @@ def login() -> 'html | Redirect':
             print(str(e))
             raise ValidationError('One or more fields were left blank.')
 
-        # Return candidate user's record from the database (if any)
+        # Fetch user's record (if it exists) from the database.
         user = crud.get_user(form_username)
 
-        if user:
+        # Check if any record was found corresponding to given username
+        # and match given password's hash against one from the record.
+        if user and check_hash(form_password, user['password']):
             # print(user)
-            # match given password's hash against one from the record
-            if check_hash(form_password, user['password']):
-                session['logged_in'] = True
-                # FIXME: flask flashes not visible in userpages
-                # msg = 'Login successful for {}'.format(user['username'])
-                # flash(msg)
-                # return '<h2>{}</h2> '.format(msg)
-                return redirect(url_for('dashboard'))
-        # return '<h2>Incorrect username or password.</h2>'
+            session['logged_in'] = True
+            # FIXME: flask flashes not visible in userpages
+            # msg = 'Login successful for {}'.format(user['username'])
+            # flash(msg)
+            return redirect(url_for('dashboard'))
         flash('Incorrect username or password.')
     return render_template('login.html', the_title='Login')
 
@@ -83,7 +80,7 @@ def register() -> 'html | Redirect':
             if not is_email(request.form['email'][:256]):
                 raise ValidationError('Invalid email address provided.')
 
-            if not is_decimal_str(request.form['mobile_num'], 10):
+            if not is_decimal_str(request.form['mobile-num'], 10):
                 raise ValidationError('Invalid phone number.')
 
             if not non_empty(request.form['addr'][:256]):
@@ -95,11 +92,12 @@ def register() -> 'html | Redirect':
                           'age':        int(request.form['age']),
                           'address':    request.form['addr'][:256],
                           'gender':     request.form['gender'],
-                          'mobile_num': int(request.form['mobile_num']),
+                          'mobile_num': int(request.form['mobile-num']),
                           'email':      request.form['email'][:256], }
 
             # Validating given card details
-            if not regex_validator(request.form['card-name'][:32], r'[A-Z]+ [A-Z]+'):
+            if not regex_validator(request.form['card-name'][:32],
+                                   r'[A-Z]+ [A-Z]+'):
                 raise ValidationError('Enter a valid card name.')
 
             card_types = ('credit', 'debit')
@@ -115,13 +113,14 @@ def register() -> 'html | Redirect':
                 raise ValidationError('Card is already expired or invalid card expiry date.')
 
             # Add day to card expiry date before storing in DB.
+            # YYYY-MM -> YYYY-MM-DD where DD is last day of month MM.
             exp_date = datetime.datetime.strptime(request.form['card-expiry'], '%Y-%m')
 
             # Calculate last day of month:
             # 1. Move up one day to first day of next month.
             # 2. Go back 1 day to last day of original month.
 
-            #    December is an exception.
+            # December is an exception as no month next to it.
             if exp_date.month == 12:
                 exp_date = exp_date.replace(day=31)
             else:
@@ -142,10 +141,11 @@ def register() -> 'html | Redirect':
             print(str(e))
             raise ValidationError('Invalid value for a numeric field. ')
 
-        # random six digit OTP to verify email
+        # Generate random six digit OTP to verify email.
         verify_info = {'otp': randint(100000, 999999)}
 
-        # store registration form in cookie for lookup in later requests
+        # Store registration data in browser's session cookie for later
+        # lookup when storing in DB after verification.
         session['reg'] = {}
         session['reg']['basic'] = basic_info
         session['reg']['card'] = card_info
@@ -159,7 +159,7 @@ def register() -> 'html | Redirect':
 @app.route('/verify', methods=['GET', 'POST'])
 def verify() -> 'Redirect':
     """Verify registration by sending OTP on email."""
-    # Check if registration is initiated
+    # Check if registration is initiated.
     if 'reg' in session:
         # FIXME: Email being resent for every wrong/invalid OTP.
         # TODO: Separate email conversation for each OTP mail
@@ -168,14 +168,14 @@ def verify() -> 'Redirect':
         msg_subject = msg_subject.format(session['reg']['verify']['otp'])
         print('[ THE_MESSAGE_SUBJECT_IS ]: ', msg_subject)
 
+        user_mail_addr = obfuscate_mail_addr(session['reg']['basic']['email'])
         message = compose_html_mail(sender=app.config['MAIL_ADDRESS'],
                                     receiver=session['reg']['basic']['email'],
                                     subject=msg_subject,
                                     template='otp.html',
-                                    # Template arguments
+                                    # template arguments
                                     user=session['reg']['basic']['first_name'],
-                                    # TODO: Make more readable
-                                    mail=obfuscate_mail_address(session['reg']['basic']['email']),
+                                    user_mail=user_mail_addr,
                                     otp=session['reg']['verify']['otp'])
 
         mail_handler.sendmail(app.config['MAIL_ADDRESS'],
@@ -184,16 +184,18 @@ def verify() -> 'Redirect':
 
         if request.method == 'POST':
             form_otp = ''
-            # Sort dict with otp digits to preserve order
-            print(request.form)
-            for k, v in sorted(request.form.items()):
-                # Validate OTP dict's keys and values.
-                if regex_validator(k, 'digit[1-6]') and is_decimal_str(v, 1):
-                    # Concatenate the digits from the OTP input form
-                    form_otp += v
+            otp_digits = request.form.getlist('digits[]')
+            print(otp_digits)
+
+            for digit in otp_digits:
+                # Check if each digit in OTP is a numeric character.
+                if is_decimal_str(digit, 1):
+                    # Concatenate all digits into OTP string.
+                    form_otp += digit
                 else:
                     raise ValidationError('Invalid OTP, OTP has been resent.')
 
+            print('sent: ', session['reg']['verify']['otp'], '\nreceived: ', form_otp)
             if int(form_otp) == session['reg']['verify']['otp']:
                 session['reg']['verify']['verified'] = True
                 session.modified = True
@@ -202,7 +204,7 @@ def verify() -> 'Redirect':
             flash('Incorrect OTP, OTP has been resent.')
         return render_template('verify_email.html',
                                 the_title='Verify Email',
-                                mail=obfuscate_mail_address(session['reg']['basic']['email'])
+                                mail=user_mail_addr
                                 )
     return redirect(url_for('register'))
 
@@ -210,7 +212,7 @@ def verify() -> 'Redirect':
 @app.route('/signup', methods=['GET', 'POST'])
 def set_credentials() -> 'html | Redirect':
     """Set login credentials for a verified registration."""
-    # Check if registered and verified
+    # Check if registered and verified.
     if 'reg' in session and 'verify' in session['reg']:
         if 'verified' in session['reg']['verify']:
             if request.method == 'POST':
@@ -243,22 +245,24 @@ def set_credentials() -> 'html | Redirect':
                 session['reg']['basic']['username'] = form_username
                 session['reg']['basic']['password'] = get_hash(form_password)
 
-                # Commit the registration into a database record
+                # Commit the registration into a database record.
                 crud.add_user(session['reg']['basic'], session['reg']['card'])
 
-                # Confirmation message to user
+                # Flash registration completion message to user.
                 msg = ('Dear {user}, your request for a new '
                        'connection has been received. You can '
                        'expect further developments within 24 hours.')
                 flash(msg.format(user=session['reg']['basic']['first_name']))
 
-                # Remove no longer needed data session cookie
+                # Remove data stored in session cookie during registration.
                 session.pop('reg')
                 return redirect(url_for('home'))
             return render_template('signup.html', the_title='Set Account Credentials')
 
         flash('Please verify your email.')
         return redirect(url_for('verify'))
+
+    flash('Please register and verify yourself before account signup.')
     return redirect(url_for('register'))
 
 
@@ -271,7 +275,7 @@ def dashboard() -> 'html':
 
 @app.route('/logout', methods=["GET"])
 def logout() -> 'html | Redirect':
-    """Logout if logged in then go to homepage."""
+    """Logout if logged in then redirect to homepage."""
     if 'logged_in' in session:
         session.pop('logged_in')
     return redirect(url_for('home'))
@@ -279,11 +283,11 @@ def logout() -> 'html | Redirect':
 
 @app.errorhandler(ValidationError)
 def invalid_form(err_msg) -> 'Redirect':
-    """Clear an invalid form and flash the validation issue.
+    """Clear an invalidly filled form and flash the validation issue.
 
-    Return a redirect to the current form which makes the browser clear
-    the form and display the indicated error in form validation to user
-    using a flash message.
+    Return a redirect back to the same URL which makes the browser clear
+    the form and indicate error in form validation to user using a
+    flash message.
     """
     print(str(err_msg))
     flash(str(err_msg))
