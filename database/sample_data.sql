@@ -5,15 +5,16 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 INSERT INTO `card_details` VALUES
-(30,'TEST USER',1234123412341234,123,'2024-08-31','debit'),
-(31,'TEST USERB',1234567812345678,123,'2025-06-30','debit');
+(1,'TEST USERA',1234123412341234,123,'2024-08-31','Debit'),
+(2,'TEST USERB',1234567812345678,123,'2025-06-30','Debit');
 
 
 
 
+/* Password for both users is 'AAaa..11' */
 INSERT INTO `user_details` VALUES
-(30,'Test','User',20,'some address','male','2022-12-17 08:07:47','test','$2b$12$nARsF.osVhFz2d.tIXiGfevKLCMiyTiYk3BDurAVrTssnOMlFO8GG',1234512345,'someone@example.com'),
-(31,'test','userb',25,'test address b','unsaid','2022-12-17 08:56:46','testb','$2b$12$364veqx8.gzPo4EYyShbXeGwmZXSLdaaDJ8x.aO4zXe5dwdhyBtxG',1212121212,'someone2@exaple.com');
+(1,'test','usera',20,'test address a','Male','2022-12-17 08:07:47','testa','$2b$12$aTxQNGInGLiDpyAC2hlPlOfWNKTrItmqD7EPEAIqevmPL1/R12ZCG',1234512345,'someonea@example.com'),
+(2,'test','userb',25,'test address b','Unsaid','2022-12-17 08:56:46','testb','$2b$12$HYHei5qd8MTYjR8MihyA6uWEay6YJAwaLrYFiYhicagv4xH1vz/4u',1212121212,'someoneb@exaple.com');
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
