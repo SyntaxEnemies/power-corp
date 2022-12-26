@@ -10,6 +10,17 @@ INSERT INTO `card_details` VALUES
 
 
 
+INSERT INTO `payment_history` VALUES
+(1,1,10000.00,'2022-12-25 16:58:49','Credit Card','test payment a'),
+(3,1,25000.00,'2022-12-26 06:32:45','Debit Card','test payment b'),
+(4,1,250.00,'2022-12-26 06:33:11','Debit Card','test payment c'),
+(5,1,250.50,'2022-12-26 06:33:34','Credit Card','test payment d'),
+(6,1,1000000.75,'2022-12-26 06:34:08','Credit Card','test payment e'),
+(7,2,10000.75,'2022-12-26 06:34:32','Credit Card','test payment a'),
+(8,2,1000000.75,'2022-12-26 06:34:44','Debit Card','test payment b'),
+(9,2,10.75,'2022-12-26 06:34:57','Debit Card','test payment c'),
+(10,2,500000.00,'2022-12-26 06:35:29','Credit Card','test payment d'),
+(11,2,5000.25,'2022-12-26 06:35:49','Debit Card','test payment e');
 
 /* Password for both users is 'AAaa..11' */
 INSERT INTO `user_details` VALUES

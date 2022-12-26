@@ -51,7 +51,7 @@ def get_user(uname: str) -> 'dict | None':
         - user info dict if a user with given username exists
         - None otherwise
 
-    user info dict's:
+    User info dict's:
         - keys: column names of 'user_details' table
         - values: corresponding values for fields of the found record
     """
@@ -97,3 +97,11 @@ def add_user(basic_data: dict, card_data: dict) -> None:
         card_data['uid'] = newuser_id
         _SQL = prepare_insert(list(card_data.keys()), 'card_details')
         cursor.execute(_SQL, tuple(card_data.values()))
+
+
+def get_payments(uid: int) -> list[tuple]:
+    """Fetch a list of all payments made from a user account."""
+    with UseDatabase(dbconfig) as cursor:
+        _SQL = """select trans_id, amount, tstamp, mode, note from payment_history where uid=%s"""
+        cursor.execute(_SQL, (uid,))
+        return cursor.fetchall()
