@@ -4,19 +4,19 @@
 
     <ul class="nav flex-column mb-4">
       <li class="nav-item">
-        <button type="button" class=" w-100 btn btn-light text-dark me-2">Home</button>
+        <a href="{{ url_for('dashboard') }}" type="button" class=" w-100 btn btn-light text-dark me-2">Home</a>
       </li>
 
       <li class="nav-item">
-        <button type="button" class=" w-100 btn btn-light text-dark me-2">Payment</button>
+        <a type="button" class=" w-100 btn btn-light text-dark me-2">Payment</a>
       </li>
 
       <li class="nav-item">
-        <button type="button" class=" w-100 btn btn-light text-dark me-2">Profile</button>
+        <a type="button" class=" w-100 btn btn-light text-dark me-2">Profile</a>
       </li>
 
       <li class="nav-item">
-        <button type="button" class=" w-100 btn btn-light text-dark me-2">Bill record </button>
+        <a href="{{ url_for('show_payments') }}" type="button" class=" w-100 btn btn-light text-dark me-2">Bill record</a>
       </li>
     </ul>
   </div>

@@ -51,6 +51,7 @@ def login() -> 'html | Redirect':
         if user and check_hash(form_password, user['password']):
             # print(user)
             session['logged_in'] = True
+            session['uid'] = user['id']
             # FIXME: flask flashes not visible in userpages
             # msg = 'Login successful for {}'.format(user['username'])
             # flash(msg)
@@ -142,6 +143,7 @@ def register() -> 'html | Redirect':
             raise ValidationError('Invalid value for a numeric field. ')
 
         # Generate random six digit OTP to verify email.
+        # TODO: Store in server-side session
         verify_info = {'otp': randint(100000, 999999)}
 
         # Store registration data in browser's session cookie for later
@@ -257,7 +259,8 @@ def set_credentials() -> 'html | Redirect':
                 # Remove data stored in session cookie during registration.
                 session.pop('reg')
                 return redirect(url_for('home'))
-            return render_template('signup.html', the_title='Set Account Credentials')
+            return render_template('signup.html',
+                                   the_title='Set Login Credentials')
 
         flash('Please verify your email.')
         return redirect(url_for('verify'))
@@ -266,11 +269,22 @@ def set_credentials() -> 'html | Redirect':
     return redirect(url_for('register'))
 
 
-@app.route('/dashboard', methods=["GET"])
+@app.route('/user/dashboard', methods=['GET'])
 @require_login
 def dashboard() -> 'html':
     """Render a logged in user's dashboard."""
-    return render_template('user/home.html')
+    return render_template('user/home.html', the_title='Dashboard')
+
+
+@app.route('/user/payments', methods=['GET'])
+@require_login
+def show_payments() -> 'html':
+    """Present a (logged in) user with their past payments."""
+    # TODO: Store uid in server-side session.
+    payments = crud.get_payments(session['uid'])
+    col_titles = ('#', 'Bill Amount', 'Time', 'Mode', 'Note')
+    return render_template('user/payments.html', the_title='Payment History',
+                           theads=col_titles, payments=payments)
 
 
 @app.route('/logout', methods=["GET"])
