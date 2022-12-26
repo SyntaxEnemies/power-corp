@@ -2,8 +2,8 @@
 from DBcm import UseDatabase
 from main import app
 
-# Find DB configuration variables (prefix 'DB_') in flask app config 
-# and copy them into separate dictionary
+# Find DB configuration variables (prefix 'DB_') in flask app config
+# and copy them into separate dictionary.
 dbconfig = {k.removeprefix('DB_').lower(): v for k, v in app.config.items() if k.startswith('DB_')}
 
 
@@ -25,8 +25,8 @@ def prepare_insert(columns: list, table: str) -> str:
     template = 'insert into {0} ({1}) values ({2})'
     # Create prepared query string by substituting table name, column
     # names and value placeholders.
-    sql = template.format(table, columns, placeholders)
-    return sql
+    query = template.format(table, columns, placeholders)
+    return query
 
 
 def get_column_names(table: str) -> list:
@@ -55,7 +55,7 @@ def get_user(uname: str) -> 'dict | None':
         - keys: column names of 'user_details' table
         - values: corresponding values for fields of the found record
     """
-    # Array to hold names of columns in 'user_details' table.
+    # Array to hold names of columns in 'user_details' table
     keys = get_column_names('user_details')
 
     with UseDatabase(dbconfig) as cursor:
@@ -67,24 +67,24 @@ def get_user(uname: str) -> 'dict | None':
     if not values:
         # If the user doesn't exist.
         return None
-    else:
-        # Return a dict by combining column names and field values of
-        # found record in DB.
-        return dict(zip(keys, values))
+
+    # Return a dict by combining column names and field values of
+    # found record in DB.
+    return dict(zip(keys, values))
 
 
 def add_user(basic_data: dict, card_data: dict) -> None:
     """Store a new user given their data.
 
     Arguments:
-    - basic_data: dict inserted as record into 'user_details' table
-    - card_data: credit/debit card record for the new user (inserted
-                 into 'card_details' table)
+        - basic_data: dict inserted as record into 'user_details' table
+        - card_data: credit/debit card record for the new user (inserted
+                     into 'card_details' table)
 
-    Both database insertions are atomic.
+    Both database insertions are atomic as a whole.
     """
     with UseDatabase(dbconfig) as cursor:
-        # Add basic user data into 'user_details' table
+        # Add basic user data into 'user_details' table.
         _SQL = prepare_insert(list(basic_data.keys()), 'user_details')
         cursor.execute(_SQL, tuple(basic_data.values()))
 
@@ -92,15 +92,16 @@ def add_user(basic_data: dict, card_data: dict) -> None:
         # It will equal the id of the user just inserted in above query.
         newuser_id = cursor.lastrowid
 
-        # Add new user's id to card_data before inserting as it is
-        # required as foreign key when inserting their card details.
+        # Add new user's id to card_data before inserting in 'card_details' as
+        # it is required as foreign key for referring to the user's record in
+        # 'user_details' table.
         card_data['uid'] = newuser_id
         _SQL = prepare_insert(list(card_data.keys()), 'card_details')
         cursor.execute(_SQL, tuple(card_data.values()))
 
 
 def get_payments(uid: int) -> list[tuple]:
-    """Fetch a list of all payments made from a user account."""
+    """Fetch a list of all payments made by a given user account."""
     with UseDatabase(dbconfig) as cursor:
         _SQL = """select trans_id, amount, tstamp, mode, note from payment_history where uid=%s"""
         cursor.execute(_SQL, (uid,))

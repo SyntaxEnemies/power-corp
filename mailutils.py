@@ -2,12 +2,14 @@
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from smtplib import SMTP_SSL
+from socket import gaierror
 from ssl import create_default_context
 
 from flask import render_template
 
 
-def create_mail_handler(sender_email: str, password: str, port: int, smtp_server: str):
+def create_mail_handler(sender_email: str, password: str, port: int,
+                        smtp_server: str):
     """Create a SMTP object to perform email operations
 
     Parameters:
@@ -18,22 +20,45 @@ def create_mail_handler(sender_email: str, password: str, port: int, smtp_server
 
     The SMTP object connects to the SMTP server over an SSL socket.
     """
-    # initialize ssl context and server 
-    ssl_context = create_default_context()
-    server = SMTP_SSL(smtp_server, port, context=ssl_context)
+    try:
+        # initialize ssl context and server
+        ssl_context = create_default_context()
+        server = SMTP_SSL(smtp_server, port, context=ssl_context)
 
-    # login
-    server.login(sender_email, password)
-    return server
+        # login
+        server.login(sender_email, password)
+        return server
+    except gaierror as e:
+        print(("[WARNING]: Socket error when creating mail handler.\n"
+               "[WARNING]: Check your internet connection."))
+        print(str(e))
 
 
-def obfuscate_mail_addr(mail_address: str) -> str:
-    """Return a hideous form of given email address."""
+def obfuscate_mail_addr(mail_address: str, ulimit: int=4) -> str:
+    """Return a hideous form of given email address.
+
+    Parameters:
+        - mail_address: email address to be obfuscated
+        - ulimit: number of username characters to include in result.
+
+    Example:
+        I: someone432@example.com
+        O: some*****@exaple.com
+
+    Only the username (characters before '@') is obfuscated.
+    If ulimit is not provided, only first 4 characters are included in
+    obfuscated mail.
+    Emails with usernames having length less than given 'ulimit' cannot
+    obfuscated, therefore returned as is.
+    """
     username, domain = mail_address.split('@')
-    return '{0}*****@{1}'.format(username[0:4], domain)
+    if len(username) > ulimit:
+        return '{0}*****@{1}'.format(username[0:ulimit], domain)
+    return '{0}@{1}'.format(username[0:ulimit], domain)
 
 
-def compose_html_mail(sender: str, receiver: str, subject: str, template: str, **format_spec) -> str:
+def compose_html_mail(sender: str, receiver: str, subject: str, template: str,
+                      **format_spec) -> str:
     """Construct a email message from a HTML template.
 
     Parameters:

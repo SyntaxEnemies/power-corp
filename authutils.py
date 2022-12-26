@@ -10,11 +10,11 @@ def require_login(func: object) -> object:
     @wraps(func)
     def wrapper(*args, **kwargs) -> 'function | Redirect':
         """Check if a user is 'logged_in'."""
-        # Invoke decorated function 'func' only if the user is logged in. 
+        # Invoke decorated function 'func' only if the user is logged in.
         if 'logged_in' in session:
             return func(*args, **kwargs)
 
-        # Redirect to login function if not logged_in.
+        # Redirect to login page if not logged_in.
         flash('Please login before accessing this page.')
         return redirect(url_for('login'))
 
