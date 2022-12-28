@@ -15,6 +15,7 @@ app = Flask(__name__)
 app.config.from_envvar('CONFIG_FILE')
 # print(app.config)
 
+# TODO: Perform this initialization asynchronously.
 mail_handler = create_mail_handler(sender_email=app.config['MAIL_ADDRESS'],
                                    password=app.config['MAIL_PASSWORD'],
                                    port=app.config['SMTP_PORT'],
@@ -74,7 +75,7 @@ def register() -> 'html | Redirect':
             if not range_validator(int(request.form['age']), 18, 150):
                 raise ValidationError('Your age is inappropriate for registration.')
 
-            genders = ('male', 'female', 'unsaid')
+            genders = ('Male', 'Female', 'Unsaid')
             if not type_validator(request.form['gender'], genders):
                 raise ValidationError('Unknown gender type.')
 
@@ -101,7 +102,7 @@ def register() -> 'html | Redirect':
                                    r'[A-Z]+ [A-Z]+'):
                 raise ValidationError('Enter a valid card name.')
 
-            card_types = ('credit', 'debit')
+            card_types = ('Credit', 'Debit')
             if not type_validator(request.form['card-type'], card_types):
                 raise ValidationError('Unknown card type.')
 
@@ -163,31 +164,41 @@ def verify() -> 'Redirect':
     """Verify registration by sending OTP on email."""
     # Check if registration is initiated.
     if 'reg' in session:
-        # FIXME: Email being resent for every wrong/invalid OTP.
-        # TODO: Separate email conversation for each OTP mail
-        # construct html email message
-        msg_subject = '[{}] - Confirm email with OTP'
-        msg_subject = msg_subject.format(session['reg']['verify']['otp'])
-        print('[ THE_MESSAGE_SUBJECT_IS ]: ', msg_subject)
-
+        # Obfuscated email used in OTP email and OTP input webpage.
         user_mail_addr = obfuscate_mail_addr(session['reg']['basic']['email'])
-        message = compose_html_mail(sender=app.config['MAIL_ADDRESS'],
-                                    receiver=session['reg']['basic']['email'],
-                                    subject=msg_subject,
-                                    template='otp.html',
-                                    # template arguments
-                                    user=session['reg']['basic']['first_name'],
-                                    user_mail=user_mail_addr,
-                                    otp=session['reg']['verify']['otp'])
 
-        mail_handler.sendmail(app.config['MAIL_ADDRESS'],
-                              session['reg']['basic']['email'],
-                              message)
+        # FIXME: Resend not working.
+        if request.method == 'GET' and 'sent' not in session['reg']['verify']:
+            # TODO: Asynchronous sending of OTP
+            # TODO: Separate email conversation for each OTP mail
+            # Construct email attachment from HTML template.
+            msg_subject = '[{}] - Confirm email with OTP'
+            msg_subject = msg_subject.format(session['reg']['verify']['otp'])
+            # print('[MAIL] Subject: ', msg_subject)
 
-        if request.method == 'POST':
+            message = compose_html_mail(sender=app.config['MAIL_ADDRESS'],
+                                        receiver=session['reg']['basic']['email'],
+                                        subject=msg_subject,
+                                        template='otp.html',
+                                        # template arguments
+                                        user=session['reg']['basic']['first_name'],
+                                        user_mail=user_mail_addr,
+                                        otp=session['reg']['verify']['otp'])
+
+            # TODO: Handle edge case where mail_handler may be None
+            mail_handler.sendmail(app.config['MAIL_ADDRESS'],
+                                  session['reg']['basic']['email'],
+                                  message)
+
+            print('[OTP] Sent: ', session['reg']['verify']['otp'])
+            flash('Check for OTP on registered email.')
+
+            session['reg']['verify']['sent'] = True
+            session.modified = True
+
+        elif request.method == "POST":
             form_otp = ''
             otp_digits = request.form.getlist('digits[]')
-            print(otp_digits)
 
             for digit in otp_digits:
                 # Check if each digit in OTP is a numeric character.
@@ -195,19 +206,24 @@ def verify() -> 'Redirect':
                     # Concatenate all digits into OTP string.
                     form_otp += digit
                 else:
-                    raise ValidationError('Invalid OTP, OTP has been resent.')
+                    raise ValidationError('Invalid OTP entered.')
 
-            print('sent: ', session['reg']['verify']['otp'], '\nreceived: ', form_otp)
+            print('[OTP] Received: ', form_otp)
             if int(form_otp) == session['reg']['verify']['otp']:
                 session['reg']['verify']['verified'] = True
+                session['reg']['verify'].pop('sent')
                 session.modified = True
                 return redirect(url_for('set_credentials'))
 
-            flash('Incorrect OTP, OTP has been resent.')
+            msg = 'Incorrect OTP entered.'
+            print(msg)
+            flash(msg)
+
         return render_template('verify_email.html',
-                                the_title='Verify Email',
-                                mail=user_mail_addr
-                                )
+                               the_title='Verify Email',
+                               mail=user_mail_addr)
+
+    flash('Please fill out the registration before verification.')
     return redirect(url_for('register'))
 
 

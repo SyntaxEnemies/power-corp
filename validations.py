@@ -69,11 +69,13 @@ def is_email(mail_addr: str) -> bool:
 
     Uses RFC 5322 as a reference.
     """
-    return regex_validator(mail_addr, (r'[a-zA-Z0-9.!#$%&\'*+\/=?^_`{|}~-]+'
-                                       r'@[a-zA-Z0-9]'
-                                       r'(?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])'
-                                       r'?(?:\.[a-zA-Z0-9]'
-                                       r'(?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*'))
+    email_regex = (r'[a-zA-Z0-9.!#$%&\'*+\/=?^_`{|}~-]+'
+                   r'@[a-zA-Z0-9]'
+                   r'(?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])'
+                   r'?(?:\.[a-zA-Z0-9]'
+                   r'(?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*')
+
+    return regex_validator(mail_addr, email_regex)
 
 
 def is_decimal_str(num: str, ntotal: int, nprecision: int=0) -> bool:

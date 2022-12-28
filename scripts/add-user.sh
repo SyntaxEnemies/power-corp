@@ -2,7 +2,7 @@
 # HTTP client config
 serv_port=5000
 cookie_file='cookie-jar'
-http_client="curl --silent --max-redirs 2 --cookie $cookie_file --cookie-jar $cookie_file --output /dev/null"
+http_client="curl -L --silent --max-redirs 3 --cookie $cookie_file --cookie-jar $cookie_file"
 
 if ! nc -z localhost "$serv_port"; then
     printf "\033[31m%s\033[0m\n" "Start flask development server on port $serv_port first."
@@ -25,13 +25,13 @@ fname='test'
 lname="user$rand_str"
 age=18
 addr="test address $rand_str"
-gender='male'
+gender='Male'
 mobile_num="$(rand_num 10)"
 email="test$rand_str@example.com"
 
 # Credit/Debit card details
 cname="TEST USER$rand_str"
-ctype='credit'
+ctype='Credit'
 cnum="$(rand_num 16)"
 ccvv="$(rand_num 3)"
 cexpiry='2030-11'
@@ -49,7 +49,7 @@ done
 [[ -z "$pass" ]] && pass='AAaa..11'
 
 # User information request
-$http_client --data "fname=$fname&lname=$lname&age=$age&addr=$addr&gender=$gender&mobile-num=$mobile_num&email=$email&card-name=$cname&card-type=$ctype&card-number=$cnum&card-cvv=$ccvv&card-expiry=$cexpiry" "localhost:$serv_port/register"
+$http_client --data "fname=$fname&lname=$lname&age=$age&addr=$addr&gender=$gender&mobile-num=$mobile_num&email=$email&card-name=$cname&card-type=$ctype&card-number=$cnum&card-cvv=$ccvv&card-expiry=$cexpiry" "localhost:$serv_port/register" > /dev/null
 
 # Accept six digit OTP from user
 read -p "Enter OTP (from flask log): " -n 6 otp
@@ -63,9 +63,14 @@ done
 # Last OTP digit
 req_data="${req_data}digits[]=${otp:5:1}"
 
+# TODO: Perform subsequent requests after the last one was successful
+
 # OTP verification request
-$http_client --data "$req_data" "localhost:$serv_port/verify"
+$http_client --data "$req_data" "localhost:$serv_port/verify" > /dev/null
+
 # Set login credentials request
-$http_client --data "username=$uname&password=$pass&confirm-password=$pass" "localhost:$serv_port/signup"
+$http_client --data "username=$uname&password=$pass&confirm-password=$pass" "localhost:$serv_port/signup" > /dev/null
+
+# TODO: Test login on newly created account
 
 rm "$cookie_file"
