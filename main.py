@@ -167,7 +167,6 @@ def verify() -> 'Redirect':
         # Obfuscated email used in OTP email and OTP input webpage.
         user_mail_addr = obfuscate_mail_addr(session['reg']['basic']['email'])
 
-        # FIXME: Resend not working.
         if request.method == 'GET' and 'sent' not in session['reg']['verify']:
             # TODO: Asynchronous sending of OTP
             # TODO: Separate email conversation for each OTP mail
@@ -196,7 +195,13 @@ def verify() -> 'Redirect':
             session['reg']['verify']['sent'] = True
             session.modified = True
 
-        elif request.method == "POST":
+        elif request.method == 'POST':
+            if request.form.get('resend'):
+                if 'sent' in session['reg']['verify']:
+                    session['reg']['verify'].pop('sent')
+                    session.modified = True
+                return redirect(url_for('verify'))
+
             form_otp = ''
             otp_digits = request.form.getlist('digits[]')
 
